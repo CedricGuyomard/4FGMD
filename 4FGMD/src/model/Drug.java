@@ -1,10 +1,12 @@
 package model;
 
-public class Drug {
+import java.util.ArrayList;
+
+public class Drug extends SuperClass{
 
 	private String name;
 	
-	private String[] listSubstance;
+	private ArrayList<String> listSubstance;
 	
 	private Disease[] listDisease;
 	
@@ -18,11 +20,11 @@ public class Drug {
 		this.name = name;
 	}
 
-	public String[] getListSubstance() {
+	public ArrayList<String> getListSubstance() {
 		return listSubstance;
 	}
 
-	public void setListSubstance(String[] listSubstance) {
+	public void setListSubstance(ArrayList<String> listSubstance) {
 		this.listSubstance = listSubstance;
 	}
 

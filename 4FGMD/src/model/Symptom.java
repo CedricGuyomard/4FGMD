@@ -1,6 +1,6 @@
 package model;
 
-public class Symptom {
+public class Symptom extends SuperClass{
 
 	/// Nom du symptome
 	private String name;

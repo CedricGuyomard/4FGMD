@@ -1,6 +1,6 @@
 package model;
 
-public class Disease {
+public class Disease extends SuperClass {
 
 	///Nom de la maladie
 	private String name;
