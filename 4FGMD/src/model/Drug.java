@@ -11,6 +11,15 @@ public class Drug extends SuperClass{
 	private Disease[] listDisease;
 	
 	private Symptom[] listEffet;
+	
+	public Drug()
+	{
+		
+	}
+	public Drug(String name)
+	{
+		this.name = name;
+	}
 
 	public String getName() {
 		return name;
