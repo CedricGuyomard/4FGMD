@@ -1,6 +1,8 @@
 package xml;
 
 
+import model.*;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
@@ -10,30 +12,52 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class DrugBankHandler implements ContentHandler {
 
-	private boolean name;
+	private String requete;
 	
-	private boolean toxicity;
+	private String type;
 	
-	private boolean indication;
+	private boolean node_name;
 	
-	private int test;
+	private boolean node_toxicity;
+
+	private boolean node_indication;
 	
-	public DrugBankHandler(){
-		test = 0;
-		
+	private boolean match;
+	
+	public DrugBankHandler(String req){
+		requete = req;
+		Drug d = new Drug();
+		match = false;
 	}
+	
+	
 	public void characters(char[] ch, int start, int length) throws SAXException {
-		
-			if(toxicity){
-				if(test == 1){
-				System.out.println("<toxicity>" + new String(ch, start, length) );
-				test++;
+			// C'est une node name, donc le nom d'un médicament
+			if(node_name){
+				String drugName = new String(ch,start,length);
+				// Si c'est le type de la recherche
+				if(type == "Drug" && drugName.contains(requete)){
+					match = true;
+				}
+				
+			}
+			
+			//C'est une node indication -> on peux trouver le nom de la maladie qui est un effet secondaire ducoup ...
+			if(node_indication){
+				String indicationCourant = new String(ch,start,length);
+				if(type == "Disease" && indicationCourant.contains(requete)){
+					// On sauvgarde le noeud car il est avant dans la lecture
+					match = true;	
 				}
 			}
-			if(indication){
-				if(test == 0){
-				System.out.println("<indication>" + new String(ch, start, length));
-				test++;
+			
+			//C'est un effet secondaire 
+			if(node_toxicity){
+				String toxicityCourant = new String(ch,start,length);
+				if(type == "Disease" && toxicityCourant.contains(requete)){	
+				  match = true;
+				  //On a fini de lire les informations utiles
+				  //On remplit le modele
 				}
 			}
 	}
@@ -46,6 +70,7 @@ public class DrugBankHandler implements ContentHandler {
 	public void endElement(String arg0, String arg1, String arg2)
 			throws SAXException {
 		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -83,15 +108,18 @@ public class DrugBankHandler implements ContentHandler {
 
 	public void startElement(String uri, String element, String qualif,
 			Attributes attr) throws SAXException {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method sub
+		if(element.compareTo("drug") == 0){
+			match = false;
+		}
 		if(element.compareTo("toxicity") == 0){
-			toxicity = true;
+			node_toxicity = true;
 		}
 		if(element.compareTo("name") == 0){
-			name = true;
+			node_name = true;
 		}
 		if(element.compareTo("indication") == 0){
-			indication = true;
+			node_indication = true;
 		}
 		
 	}
