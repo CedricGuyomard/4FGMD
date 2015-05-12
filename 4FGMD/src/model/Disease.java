@@ -1,5 +1,7 @@
 package model;
 
+import java.util.ArrayList;
+
 public class Disease extends SuperClass {
 
 	///Nom de la maladie
@@ -10,6 +12,12 @@ public class Disease extends SuperClass {
 	
 	///Liste des symptomes
 	private Symptom[] listSymptom;
+	
+	///Liste de medicament qui la soigne
+	private ArrayList<Drug> listDrugIndication;
+	
+	///Liste de medicament qui la soigne
+	private ArrayList<Drug> listDrugAdverseEffect;
 	
 	///Origine de la maladie : Social, psyco, physique
 	private String origine;
@@ -45,6 +53,22 @@ public class Disease extends SuperClass {
 
 	public void setOrigine(String origine) {
 		this.origine = origine;
+	}
+
+	public ArrayList<Drug> getListDrugIndication() {
+		return listDrugIndication;
+	}
+
+	public void setListDrugIndication(ArrayList<Drug> listDrugIndication) {
+		this.listDrugIndication = listDrugIndication;
+	}
+
+	public ArrayList<Drug> getListDrugAdverseEffect() {
+		return listDrugAdverseEffect;
+	}
+
+	public void setListDrugAdverseEffect(ArrayList<Drug> listDrugAdverseEffect) {
+		this.listDrugAdverseEffect = listDrugAdverseEffect;
 	}
 	
 }

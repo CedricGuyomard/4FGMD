@@ -1,6 +1,5 @@
 package sql;
 
-import java.awt.List;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -13,7 +12,7 @@ import model.Drug;
 
 public class SqlParser {
 
-	String url = "neptune.telcomnancy.univ-lorraine.fr";
+	String url = "jdbc:mysql://neptune.telecomnancy.univ-lorraine.fr:3306/gmd";
 	String login = "gmd-read";
 	String passwd = "esial";
 	String bdName = "gmd";
@@ -55,14 +54,58 @@ public class SqlParser {
 		return rs;
 	}
 	
-	private ArrayList<Drug> getDrugIndication(Disease maladie)
+	public Disease getDrugIndication(Disease maladie)
 	{
 		String request;
-		ArrayList<Drug> listDrug = new ArrayList();
+		ArrayList<Drug> listDrug = new ArrayList<Drug>();
 		ResultSet rs;
 		request = "SELECT Distinct(drug_name1)"
 				+ "FROM label_mapping lm, indications_raw lr "
-				+ "WHERE lm.label = lr.label AND lr.i_name = "+ maladie.getName()+";";
+				+ "WHERE lm.label = lr.label AND lr.i_name = \""+ maladie.getName()+"\";";
+		try
+		{
+			rs = this.SqlRequest(request);
+			if(rs != null )
+			{
+				while(rs.next())
+				{
+					listDrug.add(new Drug(rs.getString(0)));
+				}
+			}
+		}catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		request = "SELECT Distinct(drug_name2)"
+				+ "FROM label_mapping lm, indications_raw lr "
+				+ "WHERE lm.label = lr.label AND lr.i_name = \""+ maladie.getName()+"\";";
+		try
+		{
+			rs = this.SqlRequest(request);
+			if(rs != null)
+			{
+				while(rs.next())
+				{
+					listDrug.add(new Drug(rs.getString(0)));
+				}
+			}
+		}catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		maladie.setListDrugIndication(listDrug);
+			return maladie;
+		
+	}
+
+	public Disease getDrugAdverseEffect(Disease maladie)
+	{
+		String request;
+		ArrayList<Drug> listDrug = new ArrayList<Drug>();
+		ResultSet rs;
+		request = "SELECT Distinct(drug_name1)"
+				+ "FROM label_mapping lm, adverse_effects_raw lr "
+				+ "WHERE lm.label = lr.label AND lr.se_name = \""+ maladie.getName()+"\";";
 		try
 		{
 			rs = this.SqlRequest(request);
@@ -78,8 +121,8 @@ public class SqlParser {
 			e.printStackTrace();
 		}
 		request = "SELECT Distinct(drug_name2)"
-				+ "FROM label_mapping lm, indications_raw lr "
-				+ "WHERE lm.label = lr.label AND lr.i_name = "+ maladie.getName()+";";
+				+ "FROM label_mapping lm, adverse_effects_raw lr "
+				+ "WHERE lm.label = lr.label AND lr.se_name = \""+ maladie.getName()+"\";";
 		try
 		{
 			rs = this.SqlRequest(request);
@@ -94,8 +137,8 @@ public class SqlParser {
 		{
 			e.printStackTrace();
 		}
-			return listDrug;
-		
+		maladie.setListDrugAdverseEffect(listDrug);
+			return maladie;
 	}
-
+	
 }
