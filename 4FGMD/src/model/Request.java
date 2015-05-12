@@ -11,78 +11,46 @@ import xml.ParserDrugBank;
 
 public class Request {
 
-	/*
-	public SuperClass categorie;
-	
-	public String querry;
-	
-	public Request(String q, String t){
-		querry = q;
-		switch(t){
-		case "Disease":
-			categorie = new Disease();
-			categorie.setType("Disease");
-		break;
-		case "Drug":
-			categorie = new Drug();
-			categorie.setType("Drug");
-			break;
-		case "Symptom":
-			categorie = new Symptom();
-			categorie.setType("Symptom");
-			break;
-		}
-		
-		ParserDrugBank pdb = new ParserDrugBank(type, querry);
-		
-	} */
-	
 	private String querry;
 	
 	private String type;
 	
 	public Request(String q, String t){
-		//Étape 1 : On va vérifier si la requête est OK
+		//TODO
+		//Étape 1 : On va vérifier si la requête est OK 
 		
 		//Étape 2 : On parse la requête
-		ArrayList<String> liste_mot = new ArrayList<String>();
-		while(q.contains("ET") || q.contains("OU")){
-			if(q.contains("OU")){
-				liste_mot.add(q.substring(0, q.indexOf("OU")).trim());
-				q = q.substring(q.indexOf("OU") + 1);
-			}
-			if(q.contains("ET")){
-				liste_mot.add(q.substring(0, q.indexOf("ET")).trim());
-				q = q.substring(q.indexOf("ET") + 1);
-			}
+		String mot_courant;
+		ArrayList<String> liste_chaine = new ArrayList<String>();
+		while(q.contains("OU")){
+				liste_chaine.add(q.substring(0, q.indexOf("OU") - 1));
+				//System.out.println("Chaine a parser : " + q.substring(0, q.indexOf("OU") - 1));
+				q = q.substring(q.indexOf("OU") + 3 , q.length());
+				//System.out.println("Reste : " + q);
 		}
-		liste_mot.add(q);
-			
+		liste_chaine.add(q);
 		
-		//Étape 3 : On va consulter les différentes bases pour savoir si on trouve ce que l'on cherche
-		switch(type){
-		case "Disease":
-			
-			
-		break;
-		case "Drug":
-		 //# XML ou BDD en premier ?
-			try {
-				ParserDrugBank pdb = new ParserDrugBank("coucou");
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		ArrayList<String> liste_mot = new ArrayList<String>();
+		String chaine;
+		for(int i = 0; i < liste_chaine.size(); i++){
+			chaine = liste_chaine.get(i);
+			while(q.contains("ET")){
+				liste_mot.add(q.substring(0, chaine.indexOf("ET") - 1));
+				chaine = chaine.substring(chaine.indexOf("ET") + 3, chaine.length());
 			}
-		break;
-		case "Symptom":
+			liste_mot.add(chaine);
 			
-		break;
+			for(int j = 0; j < liste_mot.size(); j++){
+				
+				Disease dis = new Disease();
+				if(t == "Disease"){
+					dis.setName(liste_mot.get(j));
+				}
+				//Appel des bases
+			}
 			
 		}
+	
 	}
 	
-	public static void main(String[] args){
-		
-		
-	}
 }

@@ -21,6 +21,11 @@ public class Drug extends SuperClass{
 		this.name = name;
 	}
 
+	public Drug(){
+		this.listDisease = new Disease[20];
+		this.listEffet = new Symptom[20];
+	} 
+	
 	public String getName() {
 		return name;
 	}
@@ -36,6 +41,7 @@ public class Drug extends SuperClass{
 	public void setListSubstance(ArrayList<String> listSubstance) {
 		this.listSubstance = listSubstance;
 	}
+	
 
 	public Disease[] getListDisease() {
 		return listDisease;
@@ -43,6 +49,15 @@ public class Drug extends SuperClass{
 
 	public void setListDisease(Disease[] listDisease) {
 		this.listDisease = listDisease;
+	}
+	
+	public void addDisease(Disease d){
+		for(int i = 0; i < this.listDisease.length; i++){
+			if(this.listDisease[i] == null){
+				this.listDisease[i] = d;
+				break;
+			}
+		}
 	}
 
 	public Symptom[] getListEffet() {
@@ -53,5 +68,13 @@ public class Drug extends SuperClass{
 		this.listEffet = listEffet;
 	}
 	
+	public void addEffet(Symptom s){
+		for(int i = 0; i < this.listEffet.length; i++){
+			if(this.listEffet[i] == null){
+				this.listEffet[i] = s;
+				break;
+			}
+		}
+	}
 	
 }

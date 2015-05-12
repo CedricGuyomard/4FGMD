@@ -5,6 +5,9 @@ public class Disease extends SuperClass {
 	///Nom de la maladie
 	private String name;
 	
+	///Description - xml
+	private String description;
+	
 	///Liste des synonymes
 	private String[] synonym;
 	
@@ -45,6 +48,14 @@ public class Disease extends SuperClass {
 
 	public void setOrigine(String origine) {
 		this.origine = origine;
+	}
+	
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	
 }

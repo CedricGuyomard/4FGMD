@@ -1,6 +1,8 @@
 package xml;
 
 
+import java.util.ArrayList;
+
 import model.*;
 
 import org.xml.sax.Attributes;
@@ -8,30 +10,46 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.helpers.LocatorImpl;
 
 
 public class DrugBankHandler implements ContentHandler {
 
+	private Disease dis;
+	
 	private String requete;
 	
 	private String type;
 	
+	private String name;
+	
 	private boolean node_name;
+	
+	private String toxicity;
 	
 	private boolean node_toxicity;
 
+	private String indication;
+	
 	private boolean node_indication;
 	
 	private boolean match;
 	
-	public DrugBankHandler(String req){
-		requete = req;
-		Drug d = new Drug();
+	private ArrayList<Drug> listDrug;
+	
+	private Locator locator;
+	
+	public DrugBankHandler(Disease d){
+		this.dis = d;
+		this.requete = dis.getName();
+		listDrug = new ArrayList<Drug>();
 		match = false;
+		locator = new LocatorImpl();
 	}
 	
 	
 	public void characters(char[] ch, int start, int length) throws SAXException {
+			String chara = new String(ch,start,length);
 			// C'est une node name, donc le nom d'un médicament
 			if(node_name){
 				String drugName = new String(ch,start,length);
@@ -39,6 +57,7 @@ public class DrugBankHandler implements ContentHandler {
 				if(type == "Drug" && drugName.contains(requete)){
 					match = true;
 				}
+				this.name = drugName;
 				
 			}
 			
@@ -49,6 +68,7 @@ public class DrugBankHandler implements ContentHandler {
 					// On sauvgarde le noeud car il est avant dans la lecture
 					match = true;	
 				}
+				this.indication = indicationCourant;
 			}
 			
 			//C'est un effet secondaire 
@@ -56,9 +76,14 @@ public class DrugBankHandler implements ContentHandler {
 				String toxicityCourant = new String(ch,start,length);
 				if(type == "Disease" && toxicityCourant.contains(requete)){	
 				  match = true;
-				  //On a fini de lire les informations utiles
-				  //On remplit le modele
 				}
+				if(match){
+					  //On a fini de lire les informations utiles
+					  //On remplit le modele
+					  this.addDrug();
+					  
+				}
+				this.toxicity = toxicityCourant;
 			}
 	}
 
@@ -70,7 +95,6 @@ public class DrugBankHandler implements ContentHandler {
 	public void endElement(String arg0, String arg1, String arg2)
 			throws SAXException {
 		// TODO Auto-generated method stub
-		
 		
 	}
 
@@ -109,6 +133,7 @@ public class DrugBankHandler implements ContentHandler {
 	public void startElement(String uri, String element, String qualif,
 			Attributes attr) throws SAXException {
 		// TODO Auto-generated method sub
+		
 		if(element.compareTo("drug") == 0){
 			match = false;
 		}
@@ -130,5 +155,20 @@ public class DrugBankHandler implements ContentHandler {
 		
 	}
 
+	public ArrayList<Drug> getResult(){
+		return this.listDrug;
+	}
+	
+	public void addDrug(){
+		Drug d = new Drug();
+		d.setName(name);
+		Symptom s = new Symptom();
+		s.setDescription(toxicity);
+		d.addEffet(s);
+		Disease dis = new Disease();
+		dis.setDescription(indication);
+		d.addDisease(dis);
+		this.listDrug.add(d);
+	}
 	
 }
