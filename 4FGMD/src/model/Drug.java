@@ -20,11 +20,6 @@ public class Drug extends SuperClass{
 	{
 		this.name = name;
 	}
-
-	public Drug(){
-		this.listDisease = new Disease[20];
-		this.listEffet = new Symptom[20];
-	} 
 	
 	public String getName() {
 		return name;
