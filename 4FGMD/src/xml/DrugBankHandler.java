@@ -33,18 +33,23 @@ public class DrugBankHandler implements ContentHandler {
 	
 	private boolean node_indication;
 	
+	private ArrayList<String> synonym;
+	
+	private boolean node_synonym;
+	
 	private boolean match;
 	
 	private ArrayList<Drug> listDrug;
 	
-	private Locator locator;
+	private int indentation;
 	
 	public DrugBankHandler(Disease d){
 		this.dis = d;
 		this.requete = dis.getName();
 		listDrug = new ArrayList<Drug>();
+		synonym = new ArrayList<String>();
 		match = false;
-		locator = new LocatorImpl();
+		indentation = 0;
 	}
 	
 	
@@ -95,6 +100,7 @@ public class DrugBankHandler implements ContentHandler {
 	public void endElement(String arg0, String arg1, String arg2)
 			throws SAXException {
 		// TODO Auto-generated method stub
+		indentation--;
 		
 	}
 
@@ -133,18 +139,21 @@ public class DrugBankHandler implements ContentHandler {
 	public void startElement(String uri, String element, String qualif,
 			Attributes attr) throws SAXException {
 		// TODO Auto-generated method sub
-		
-		if(element.compareTo("drug") == 0){
+		indentation++;
+		if(element.compareTo("drug") == 0 && indentation == 1){
 			match = false;
 		}
-		if(element.compareTo("toxicity") == 0){
+		if(element.compareTo("toxicity") == 0 && indentation == 1){
 			node_toxicity = true;
 		}
-		if(element.compareTo("name") == 0){
+		if(element.compareTo("name") == 0 && indentation == 1){
 			node_name = true;
 		}
-		if(element.compareTo("indication") == 0){
+		if(element.compareTo("indication") == 0 && indentation == 1){
 			node_indication = true;
+		}
+		if(element.compareTo("synonym") == 0 && indentation == 1){
+			node_synonym = true;
 		}
 		
 	}
@@ -160,8 +169,7 @@ public class DrugBankHandler implements ContentHandler {
 	}
 	
 	public void addDrug(){
-		Drug d = new Drug();
-		d.setName(name);
+		Drug d = new Drug(name);
 		Symptom s = new Symptom();
 		s.setDescription(toxicity);
 		d.addEffet(s);
