@@ -21,16 +21,12 @@ public class testsql {
 		
 		sqp.getDrugIndication(maladie);
 		sqp.getDrugAdverseEffect(maladie);
+		System.out.println("Medicament qui soigne");
 		for(Drug d : maladie.getListDrugIndication())
 		{
 			System.out.println(d.getName());
 		}
-		
-		System.out.println();
-		System.out.println();
-		System.out.println();
-		System.out.println();
-	
+		System.out.println("Medicament qui provoque");
 		for(Drug d : maladie.getListDrugAdverseEffect())
 		{
 			System.out.println(d.getName());
