@@ -10,7 +10,7 @@ public class Drug extends SuperClass{
 	
 	private Disease[] listDisease;
 	
-	private Symptom[] listEffet;
+	private  ArrayList<Disease> listEffet;
 	
 	public Drug()
 	{
@@ -55,18 +55,18 @@ public class Drug extends SuperClass{
 		}
 	}
 
-	public Symptom[] getListEffet() {
+	public  ArrayList<Disease> getListEffet() {
 		return listEffet;
 	}
 
-	public void setListEffet(Symptom[] listEffet) {
+	public void setListEffet( ArrayList<Disease> listEffet) {
 		this.listEffet = listEffet;
 	}
 	
-	public void addEffet(Symptom s){
-		for(int i = 0; i < this.listEffet.length; i++){
-			if(this.listEffet[i] == null){
-				this.listEffet[i] = s;
+	public void addEffet(Disease s){
+		for(int i = 0; i < this.listEffet.size(); i++){
+			if(this.listEffet.get(i)== null){
+				this.listEffet.set(i, s);
 				break;
 			}
 		}

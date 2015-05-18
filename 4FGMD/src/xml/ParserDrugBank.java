@@ -88,7 +88,7 @@ public class ParserDrugBank {
 			ArrayList<Drug> test = pdb.getMedic("Lepirudin");
 			for(int i = 0; i < test.size(); i++){
 				System.out.println("Nom : "+ test.get(i).getName());
-				System.out.println("Effet secondaire(toxicity) : "+ test.get(i).getListEffet()[0].getDescription());
+				System.out.println("Effet secondaire(toxicity) : "+ test.get(i).getListEffet().get(0).getDescription());
 				System.out.println("Indication : "+ test.get(i).getListDisease()[0].getDescription());
 			}
 		} catch (IOException e) {

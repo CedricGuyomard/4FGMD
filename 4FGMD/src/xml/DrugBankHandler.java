@@ -162,7 +162,7 @@ public class DrugBankHandler implements ContentHandler {
 	public void addDrug(){
 		Drug d = new Drug();
 		d.setName(name);
-		Symptom s = new Symptom();
+		Disease s = new Disease();
 		s.setDescription(toxicity);
 		d.addEffet(s);
 		Disease dis = new Disease();

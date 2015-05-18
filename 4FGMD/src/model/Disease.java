@@ -14,7 +14,7 @@ public class Disease extends SuperClass {
 	private String[] synonym;
 	
 	///Liste des symptomes
-	private Symptom[] listSymptom;
+	private ArrayList<Disease> listSymptom;
 	
 	///Liste de medicament qui la soigne
 	private ArrayList<Drug> listDrugIndication;
@@ -42,11 +42,11 @@ public class Disease extends SuperClass {
 		this.synonym = synonym;
 	}
 
-	public Symptom[] getListSymptom() {
+	public  ArrayList<Disease> getListSymptom() {
 		return listSymptom;
 	}
 
-	public void setListSymptom(Symptom[] listSymptom) {
+	public void setListSymptom( ArrayList<Disease> listSymptom) {
 		this.listSymptom = listSymptom;
 	}
 
