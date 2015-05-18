@@ -21,36 +21,35 @@ public class SqlParser {
 	
 	public SqlParser ()
 	{
+				try
+		{
+			Class.forName("com.mysql.jdbc.Driver");
+			cn = DriverManager.getConnection(url, login, passwd);
+			st = cn.createStatement();
+		}
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		} 
+		catch (ClassNotFoundException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 	
 	private ResultSet SqlRequest (String request)
 	{
 		ResultSet rs = null;
-		try{
-			Class.forName("com.mysql.jdbc.Driver");
-			cn = DriverManager.getConnection(url, login, passwd);
-			st = cn.createStatement();
+
+		try {
 			rs = st.executeQuery(request);
-			
-		}catch(SQLException e)
-		{
-			e.printStackTrace();
-		}catch(ClassNotFoundException e)
-		{
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		finally
-		{
-			try
-			{
-				cn.close();
-				st.close();
-			}catch(final SQLException e)
-			{
-				e.printStackTrace();
-			}
-		}
+
 		return rs;
 	}
 	
@@ -141,4 +140,14 @@ public class SqlParser {
 			return maladie;
 	}
 	
+	public void CloseDB()
+	{
+		try {
+			this.cn.close();
+			this.st.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }
