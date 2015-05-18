@@ -68,7 +68,7 @@ public class SqlParser {
 			{
 				while(rs.next())
 				{
-					listDrug.add(new Drug(rs.getString(0)));
+					listDrug.add(new Drug(rs.getString(1)));
 				}
 			}
 		}catch(SQLException e)
@@ -85,7 +85,7 @@ public class SqlParser {
 			{
 				while(rs.next())
 				{
-					listDrug.add(new Drug(rs.getString(0)));
+					listDrug.add(new Drug(rs.getString(1)));
 				}
 			}
 		}catch(SQLException e)
@@ -150,4 +150,5 @@ public class SqlParser {
 			e.printStackTrace();
 		}
 	}
+
 }

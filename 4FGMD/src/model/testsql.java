@@ -8,11 +8,14 @@ public class testsql {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+		try
+		{
 		Disease maladie = new Disease();
 		Scanner sc = new Scanner(System.in);
 		SqlParser sqp = new SqlParser();
 		
-		String str = sc.next();
+		System.out.println("Ecrire le nom de la maladie : ");
+		String str = sc.nextLine();
 		maladie.setName(str);
 		
 		
@@ -34,6 +37,12 @@ public class testsql {
 		}
 		
 		sqp.CloseDB();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		System.out.println("Fin");
 	}
 
 }
