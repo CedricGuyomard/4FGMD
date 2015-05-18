@@ -19,17 +19,19 @@ public class DrugBankHandler implements ContentHandler {
 	
 	private String requete;
 	
-	private String type;
-	
 	private String name;
 	
 	private boolean node_name;
+	
+	private String descr;
+	
+	private boolean node_descr;
 	
 	private String toxicity;
 	
 	private boolean node_toxicity;
 
-	private String indication;
+	private String indication; 
 	
 	private boolean node_indication;
 	
@@ -37,7 +39,9 @@ public class DrugBankHandler implements ContentHandler {
 	
 	private boolean node_synonym;
 	
-	private boolean match;
+	private boolean match_tox;
+	
+	private boolean match_ind;
 	
 	private ArrayList<Drug> listDrug;
 	
@@ -46,10 +50,10 @@ public class DrugBankHandler implements ContentHandler {
 	public DrugBankHandler(Disease d){
 		this.dis = d;
 		this.requete = dis.getName();
-		listDrug = new ArrayList<Drug>();
 		synonym = new ArrayList<String>();
-		match = false;
-		indentation = 0;
+		match_tox = false;
+		match_ind = false;
+		indentation = -1;
 	}
 	
 	
@@ -59,19 +63,22 @@ public class DrugBankHandler implements ContentHandler {
 			if(node_name){
 				String drugName = new String(ch,start,length);
 				// Si c'est le type de la recherche
-				if(type == "Drug" && drugName.contains(requete)){
-					match = true;
-				}
 				this.name = drugName;
-				
 			}
 			
-			//C'est une node indication -> on peux trouver le nom de la maladie qui est un effet secondaire ducoup ...
+			if(node_descr){
+				String desc = new String(ch,start,length);
+				// Si c'est le type de la recherche
+				this.descr = desc;
+			}
+			
+			
+			//C'est une node indication -> on peux trouver le nom de la maladie qui est un effet secondaire 
 			if(node_indication){
 				String indicationCourant = new String(ch,start,length);
-				if(type == "Disease" && indicationCourant.contains(requete)){
+				if(indicationCourant.contains(requete)){
 					// On sauvgarde le noeud car il est avant dans la lecture
-					match = true;	
+					match_ind = true;	
 				}
 				this.indication = indicationCourant;
 			}
@@ -79,16 +86,15 @@ public class DrugBankHandler implements ContentHandler {
 			//C'est un effet secondaire 
 			if(node_toxicity){
 				String toxicityCourant = new String(ch,start,length);
-				if(type == "Disease" && toxicityCourant.contains(requete)){	
-				  match = true;
-				}
-				if(match){
-					  //On a fini de lire les informations utiles
-					  //On remplit le modele
-					  this.addDrug();
-					  
+				if(toxicityCourant.contains(requete)){	
+				  match_tox = true;
 				}
 				this.toxicity = toxicityCourant;
+			}
+			
+			if(node_synonym){
+				String syno = new String(ch,start,length);
+				this.synonym.add(syno) ;
 			}
 	}
 
@@ -100,8 +106,24 @@ public class DrugBankHandler implements ContentHandler {
 	public void endElement(String arg0, String arg1, String arg2)
 			throws SAXException {
 		// TODO Auto-generated method stub
-		indentation--;
 		
+		
+		node_indication = false;
+		node_name = false;
+		node_synonym = false;
+		node_toxicity = false;
+		if(arg1.compareTo("drug") == 0 && indentation == 0){
+			if(match_tox || match_ind){
+				Drug d = new Drug(this.name);
+				d.setDescription(this.descr);
+				d.setSynonym(this.synonym);
+				if(match_tox)
+					this.dis.addListDrugAdverseEffect(d);
+				if(match_ind)
+					this.dis.addListDrugIndication(d);
+			}
+		}
+		indentation--;
 	}
 
 	public void endPrefixMapping(String arg0) throws SAXException {
@@ -140,19 +162,24 @@ public class DrugBankHandler implements ContentHandler {
 			Attributes attr) throws SAXException {
 		// TODO Auto-generated method sub
 		indentation++;
-		if(element.compareTo("drug") == 0 && indentation == 1){
-			match = false;
+	
+		if(element.compareTo("description") == 0 && indentation == 1){
+			node_descr = true;
 		}
+		
 		if(element.compareTo("toxicity") == 0 && indentation == 1){
 			node_toxicity = true;
 		}
+		
 		if(element.compareTo("name") == 0 && indentation == 1){
 			node_name = true;
+			
 		}
 		if(element.compareTo("indication") == 0 && indentation == 1){
 			node_indication = true;
+			
 		}
-		if(element.compareTo("synonym") == 0 && indentation == 1){
+		if(element.compareTo("synonym") == 0 && indentation == 2){
 			node_synonym = true;
 		}
 		
@@ -164,19 +191,10 @@ public class DrugBankHandler implements ContentHandler {
 		
 	}
 
-	public ArrayList<Drug> getResult(){
-		return this.listDrug;
+	public Disease getResult(){
+		return this.dis;
 	}
 	
-	public void addDrug(){
-		Drug d = new Drug(name);
-		Symptom s = new Symptom();
-		s.setDescription(toxicity);
-		d.addEffet(s);
-		Disease dis = new Disease();
-		dis.setDescription(indication);
-		d.addDisease(dis);
-		this.listDrug.add(d);
-	}
+
 	
 }

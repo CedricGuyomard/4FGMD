@@ -6,19 +6,14 @@ public class Drug extends SuperClass{
 
 	private String name;
 	
-	private ArrayList<String> listSubstance;
+	private String description;
 	
-	private Disease[] listDisease;
+	private ArrayList<String> synonym;
 	
-	private Symptom[] listEffet;
-	
-	public Drug()
-	{
-		
-	}
 	public Drug(String name)
 	{
 		this.name = name;
+		this.synonym = new ArrayList<String>();
 	}
 	
 	public String getName() {
@@ -29,47 +24,20 @@ public class Drug extends SuperClass{
 		this.name = name;
 	}
 
-	public ArrayList<String> getListSubstance() {
-		return listSubstance;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setListSubstance(ArrayList<String> listSubstance) {
-		this.listSubstance = listSubstance;
-	}
-	
-
-	public Disease[] getListDisease() {
-		return listDisease;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
-	public void setListDisease(Disease[] listDisease) {
-		this.listDisease = listDisease;
-	}
-	
-	public void addDisease(Disease d){
-		for(int i = 0; i < this.listDisease.length; i++){
-			if(this.listDisease[i] == null){
-				this.listDisease[i] = d;
-				break;
-			}
-		}
+	public ArrayList<String> getSynonym() {
+		return synonym;
 	}
 
-	public Symptom[] getListEffet() {
-		return listEffet;
-	}
-
-	public void setListEffet(Symptom[] listEffet) {
-		this.listEffet = listEffet;
-	}
-	
-	public void addEffet(Symptom s){
-		for(int i = 0; i < this.listEffet.length; i++){
-			if(this.listEffet[i] == null){
-				this.listEffet[i] = s;
-				break;
-			}
-		}
+	public void setSynonym(ArrayList<String> synonym) {
+		this.synonym = synonym;
 	}
 	
 }

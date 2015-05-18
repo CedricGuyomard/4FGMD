@@ -14,18 +14,23 @@ public class Disease extends SuperClass {
 	private String[] synonym;
 	
 	///Liste des symptomes
-	private Symptom[] listSymptom;
+	private ArrayList<Disease> listSymptom;
 	
 	///Liste de medicament qui la soigne
 	private ArrayList<Drug> listDrugIndication;
 	
-	///Liste de medicament qui la soigne
+	///Liste de medicament qui la cause
 	private ArrayList<Drug> listDrugAdverseEffect;
 	
 	///Origine de la maladie : Social, psyco, physique
 	private String origine;
 
 	
+	public Disease(){
+		listSymptom = new ArrayList<Disease>();
+		listDrugIndication = new ArrayList<Drug>();
+		listDrugAdverseEffect = new ArrayList<Drug>();
+	}
 	public String getName() {
 		return name;
 	}
@@ -42,11 +47,11 @@ public class Disease extends SuperClass {
 		this.synonym = synonym;
 	}
 
-	public Symptom[] getListSymptom() {
+	public  ArrayList<Disease> getListSymptom() {
 		return listSymptom;
 	}
 
-	public void setListSymptom(Symptom[] listSymptom) {
+	public void setListSymptom( ArrayList<Disease> listSymptom) {
 		this.listSymptom = listSymptom;
 	}
 
@@ -66,12 +71,20 @@ public class Disease extends SuperClass {
 		this.listDrugIndication = listDrugIndication;
 	}
 
+	public void addListDrugIndication(Drug d){
+		this.listDrugIndication.add(d);
+	}
+	
 	public ArrayList<Drug> getListDrugAdverseEffect() {
 		return listDrugAdverseEffect;
 	}
-
+	
 	public void setListDrugAdverseEffect(ArrayList<Drug> listDrugAdverseEffect) {
 		this.listDrugAdverseEffect = listDrugAdverseEffect;
+	}
+	
+	public void addListDrugAdverseEffect(Drug d){
+		this.listDrugAdverseEffect.add(d);
 	}
 	
 	public String getDescription() {
