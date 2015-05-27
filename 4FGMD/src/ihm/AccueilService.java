@@ -38,7 +38,6 @@ public class AccueilService {
 			for(Disease d : listDisease){
 				d = pdb.getDisease(d);
 			}
-			
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -69,7 +68,7 @@ public class AccueilService {
 		listDisease.addAll(getStringDisease(listDiseaseName));
 		
 		// a Threader pour Csv 
-		listDisease.addAll(getCSVDisease(listDiseaseName));
+		//listDisease.addAll(getCSVDisease(listDiseaseName));
 		
 		for(int i = 0; i < listDisease.size(); i++){
 			for(int j = 0; j < listDisease.size(); j++){
