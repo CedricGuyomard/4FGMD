@@ -2,6 +2,7 @@ package text;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -90,7 +91,10 @@ public class TextService {
 		return dis;
 	}
 	private static Disease parseCS(TextItem ti,Disease dis){
-		//dis.setDescription(ti.getCS());
+		for(String str :ti.getCS().split("--")){
+			Disease sign = new Disease();
+			
+		}
 		return dis;
 	}
 }

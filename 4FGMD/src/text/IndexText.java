@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Scanner;
 
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
@@ -44,7 +43,7 @@ public class IndexText {
 	private static final String FILE = "omim.txt";
 
 	static final File INDEX_DIR = new File("drug_bank");
-	static final File INDEX_DIR_OMIM = new File(FILE);
+	static final File INDEX_DIR_OMIM = new File("omim");
 	static enum keyWord{
 		THEEND("THEEND"),RECORD("RECORD"),FIELD("FIELD");
 		String value;
@@ -222,7 +221,7 @@ public class IndexText {
 		map.replace("TX", map.get("TX")+" "+str);
 	}
 	private static void getCS(HashMap<String, String> map,BufferedReader br,String str){
-		map.replace("CS", map.get("CS")+" "+str);
+		map.replace("CS", map.get("CS")+"--"+str);
 	}
 	private static String getDetails(BufferedReader br,String line,lamdaString fct) throws IOException{
 		while((line=br.readLine())!=null){
