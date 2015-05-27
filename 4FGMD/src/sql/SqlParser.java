@@ -67,7 +67,7 @@ public class SqlParser {
 		ArrayList<Drug> listDrug = new ArrayList<Drug>();
 		ResultSet rs;
 		
-		request = "SELECT Distinct(drug_name2)"
+		request = "SELECT Distinct(drug_name2), lr."
 				+ "FROM label_mapping lm, indications_raw lr "
 				+ "WHERE lm.label = lr.label AND lr.i_name LIKE %upper(\""+ maladie.getName()+"\")%;";
 		try

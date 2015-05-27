@@ -12,41 +12,41 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.RadioButton?>
 
 
 <AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
    <children>
       <SplitPane dividerPositions="0.5" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
+          <HBox fx:id="boxTitle" alignment="CENTER_LEFT"  spacing="15" >
+          	<children>
+          		<Label text="RESEARCH" minWidth="100"/>
+          		<HBox alignment="CENTER"  prefWidth="1000" >
+		          	<children>
+          				<RadioButton minWidth="150" fx:id="rbSign" text="Signs or Diseases" selected="true" >
+				        <toggleGroup>
+				            <ToggleGroup fx:id="$toggleGroup" />
+				        </toggleGroup></RadioButton>
+          				<RadioButton minWidth="100" fx:id="rbDrug" text="Drugs" toggleGroup="$toggleGroup">  </RadioButton>
+          			</children>
+		          </HBox>
+		          <Button fx:id="search" text="Search" minWidth="100" ></Button>
+          	</children>
+          </HBox>
           <VBox fx:id="boxSearch"  >
                <children>
                   <SplitPane >
                     <items >
-                      <VBox fx:id="boxDisease" alignment="CENTER" >
-                            <padding>
-                               <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-                            </padding>
-                            <children>
-                               <Label text="Label" />
-                               <HBox alignment="CENTER" >
-                                  <children>
-                                     <TextField fx:id="tfDisease" prefWidth="500" />
-                                     <Button fx:id="bDiseaseAnd" mnemonicParsing="false" text="And" minWidth="40"/>
-                                     <Button fx:id="bDiseaseOr" mnemonicParsing="false" text="Or" minWidth="40"/>
-                                  </children>
-                               </HBox>
-                               <ListView fx:id="lvDisease" />
-                            </children>
-                        </VBox>
                       <VBox fx:id="boxSign" alignment="CENTER" >
                             <padding>
                                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                             </padding>
                             <children>
-                               <Label text="Label" />
+                               <Label text="Signs or Diseases" />
                                <HBox alignment="CENTER" >
                                   <children>
-                                     <TextField fx:id="tfSign" prefWidth="500" />
+                                     <TextField fx:id="tfSign" prefWidth="2000" />
                                      <Button fx:id="bSignAnd" mnemonicParsing="false" text="And" minWidth="40"/>
                                      <Button fx:id="bSignOr" mnemonicParsing="false" text="Or" minWidth="40"/>
                                   </children>
@@ -59,10 +59,10 @@
                                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                             </padding>
                             <children>
-                               <Label text="Label" />
+                               <Label text="Drugs" />
                                <HBox alignment="CENTER" >
                                   <children>
-                                     <TextField fx:id="tfDrug" prefWidth="500" />
+                                     <TextField fx:id="tfDrug" prefWidth="2000" />
                                      <Button fx:id="bDrugAnd" mnemonicParsing="false" text="And" minWidth="40"/>
                                      <Button fx:id="bDrugOr" mnemonicParsing="false" text="Or" minWidth="40"/>
                                   </children>
@@ -74,23 +74,27 @@
                   </SplitPane>
                </children>
             </VBox>
-          <HBox fx:id="boxParam" alignment="CENTER"  spacing="15" >
+          <HBox fx:id="boxParam" alignment="CENTER" managed="false" visible="false"  spacing="15" >
           	<children>
           		<CheckBox fx:id="cb" text="Dis" >  </CheckBox>
           		<CheckBox fx:id="o2" text="" >  </CheckBox>
-          		<Button fx:id="search" text="Search"></Button>
+          	</children>
+          </HBox>
+          <HBox fx:id="boxTitleResult" alignment="CENTER_LEFT"  spacing="15" >
+          	<children>
+          		<Label text="RESULTS" />
           	</children>
           </HBox>
           <VBox fx:id="boxResult" >
                <children>
-                  <ScrollPane>
+                  <Pane>
                   	<VBox fx:id="boxResultDiseases">
 	                  	<HBox >
-	                  		<Label text="Diseases"></Label>
-	                  		<ComboBox   fx:id="cbDisResult"></ComboBox>
+	                  		<Label text="Diseases" prefWidth="70"></Label>
+	                  		<ComboBox   fx:id="cbDisResult" prefWidth="300"></ComboBox>
 	                  	</HBox>
 	                  	<Label text="Description"></Label>
-	                  	<TextArea fx:id="taDisDescription" prefHeight="80"></TextArea>
+	                  	<TextArea fx:id="taDisDescription" editable="false" prefHeight="80"></TextArea>
 	                  	<HBox fx:id="boxDisResult" alignment="CENTER">
 	                  		<VBox fx:id="boxDisSynonym">
 	                  			<Label text="Synonyms" ></Label>
@@ -110,7 +114,7 @@
 	                  		</VBox>
 	                  	</HBox>
                   	</VBox>          	
-                  </ScrollPane>
+                  </Pane>
                </children>
             </VBox>
         </items>
