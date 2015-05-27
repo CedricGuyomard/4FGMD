@@ -4,11 +4,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import model.Disease;
 
 import org.apache.lucene.queryparser.classic.ParseException;
+import org.xml.sax.SAXException;
 
+import sql.SqlParser;
 import text.TextService;
+import xml.ParserDrugBank;
 import couchdb.Couchdb;
 import couchdb.CouchdbException;
 
@@ -20,12 +25,36 @@ public class AccueilService {
 		
 		listDisease = getSynonim(listDiseaseName);
 		
-		
+		listDisease = getDrug(listDisease);
 		
 		return listDisease;
 	}
 	
 	private static List<Disease> getDrug(List<Disease> listDisease){
+		
+		try {
+			ParserDrugBank pdb = new ParserDrugBank();
+			
+			for(Disease d : listDisease){
+				d = pdb.getDisease(d);
+			}
+			
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		SqlParser sqlP = new SqlParser();
+		for(Disease d : listDisease){
+			d = sqlP.getAllDrug(d);
+		}
 		
 		return listDisease;
 	}

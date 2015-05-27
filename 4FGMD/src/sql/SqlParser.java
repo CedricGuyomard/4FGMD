@@ -67,6 +67,12 @@ public class SqlParser {
 		ArrayList<Drug> listDrug = new ArrayList<Drug>();
 		ResultSet rs;
 		
+		ArrayList<String> listNameDrug = new ArrayList<String>();
+		for(Drug d : maladie.getListDrugIndication()){
+			listNameDrug.add(d.getName());
+		}
+		
+		
 		request = "SELECT Distinct(drug_name2), lr."
 				+ "FROM label_mapping lm, indications_raw lr "
 				+ "WHERE lm.label = lr.label AND lr.i_name LIKE %upper(\""+ maladie.getName()+"\")%;";
@@ -77,7 +83,10 @@ public class SqlParser {
 			{
 				while(rs.next())
 				{
-					listDrug.add(new Drug(rs.getString(1)));
+					if(!listNameDrug.contains(rs.getString(1))){
+						listDrug.add(new Drug(rs.getString(1)));
+						listNameDrug.add(rs.getString(1));
+					}
 				}
 			}
 		}catch(SQLException e)
@@ -95,6 +104,11 @@ public class SqlParser {
 		ArrayList<Drug> listDrug = new ArrayList<Drug>();
 		ResultSet rs;
 		
+		ArrayList<String> listNameDrug = new ArrayList<String>();
+		for(Drug d : maladie.getListDrugAdverseEffect()){
+			listNameDrug.add(d.getName());
+		}
+		
 		request = "SELECT Distinct(drug_name2)"
 				+ "FROM label_mapping lm, adverse_effects_raw lr "
 				+ "WHERE lm.label = lr.label AND AND lr.se_name LIKE %upper(\""+ maladie.getName()+"\")%;";
@@ -105,7 +119,10 @@ public class SqlParser {
 			{
 				while(rs.next())
 				{
-					listDrug.add(new Drug(rs.getString(1)));
+					if(!listNameDrug.contains(rs.getString(1))){
+						listDrug.add(new Drug(rs.getString(1)));
+						listNameDrug.add(rs.getString(1));
+					}
 				}
 			}
 		}catch(SQLException e)
