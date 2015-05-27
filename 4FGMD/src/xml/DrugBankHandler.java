@@ -5,12 +5,12 @@ import java.util.ArrayList;
 
 import model.*;
 
+import org.apache.commons.lang3.StringUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.helpers.LocatorImpl;
+
 
 
 public class DrugBankHandler implements ContentHandler {
@@ -18,6 +18,8 @@ public class DrugBankHandler implements ContentHandler {
 	private Disease dis;
 	
 	private String requete;
+	
+	private String typeRequete;
 	
 	private String name;
 	
@@ -43,25 +45,43 @@ public class DrugBankHandler implements ContentHandler {
 	
 	private boolean match_ind;
 	
-	private ArrayList<Drug> listDrug;
+	private boolean match_drug;
+	
+	private ArrayList<Disease> listDis;
 	
 	private int indentation;
 	
 	public DrugBankHandler(Disease d){
 		this.dis = d;
 		this.requete = dis.getName();
+		this.typeRequete = "Disease";
 		synonym = new ArrayList<String>();
 		match_tox = false;
 		match_ind = false;
 		indentation = -1;
 	}
 	
+	public DrugBankHandler(Drug d){
+		listDis = new ArrayList<Disease>();
+		this.requete = d.getName();
+		this.typeRequete = "Drug";
+		synonym = new ArrayList<String>();
+		match_drug = false;
+		indentation = -1;
+	}
 	
 	public void characters(char[] ch, int start, int length) throws SAXException {
 			String chara = new String(ch,start,length);
 			// C'est une node name, donc le nom d'un médicament
 			if(node_name){
 				String drugName = new String(ch,start,length);
+				
+				if(this.typeRequete == "Drug"){
+					if(StringUtils.containsIgnoreCase(drugName, this.requete)){
+						System.out.println(drugName + " " + this.requete );
+						this.match_drug = true;
+					}
+				}
 				// Si c'est le type de la recherche
 				this.name = drugName;
 			}
@@ -76,9 +96,11 @@ public class DrugBankHandler implements ContentHandler {
 			//C'est une node indication -> on peux trouver le nom de la maladie qui est un effet secondaire 
 			if(node_indication){
 				String indicationCourant = new String(ch,start,length);
-				if(indicationCourant.contains(requete)){
-					// On sauvgarde le noeud car il est avant dans la lecture
-					match_ind = true;	
+				if(typeRequete == "Disease"){
+					if(StringUtils.containsIgnoreCase(indicationCourant,requete)){
+						// On sauvegarde le noeud car il est avant dans la lecture
+						match_ind = true;	
+					}
 				}
 				this.indication = indicationCourant;
 			}
@@ -86,14 +108,21 @@ public class DrugBankHandler implements ContentHandler {
 			//C'est un effet secondaire 
 			if(node_toxicity){
 				String toxicityCourant = new String(ch,start,length);
-				if(toxicityCourant.contains(requete)){	
-				  match_tox = true;
+				if(typeRequete == "Disease"){
+					if(StringUtils.containsIgnoreCase(toxicityCourant,this.requete)){	
+					  match_tox = true;
+					}
 				}
 				this.toxicity = toxicityCourant;
 			}
 			
 			if(node_synonym){
 				String syno = new String(ch,start,length);
+				if(this.typeRequete == "Drug"){
+					if(StringUtils.containsIgnoreCase(syno, this.requete)){
+						this.match_drug = true;
+					}
+				}
 				this.synonym.add(syno) ;
 			}
 	}
@@ -106,14 +135,13 @@ public class DrugBankHandler implements ContentHandler {
 	public void endElement(String arg0, String arg1, String arg2)
 			throws SAXException {
 		// TODO Auto-generated method stub
-		
-		
 		node_indication = false;
 		node_name = false;
 		node_synonym = false;
 		node_toxicity = false;
-		if(arg1.compareTo("drug") == 0 && indentation == 0){
-			if(match_tox || match_ind){
+		
+		if(arg1.compareTo("drug") == 0 && indentation == 1){
+			if(typeRequete == "Disease" && (match_tox || match_ind)){
 				Drug d = new Drug(this.name);
 				d.setDescription(this.descr);
 				d.setSynonym(this.synonym);
@@ -122,6 +150,28 @@ public class DrugBankHandler implements ContentHandler {
 				if(match_ind)
 					this.dis.addListDrugIndication(d);
 			}
+			
+			if(typeRequete == "Drug" && match_drug){
+				Drug d = new Drug(this.name);
+				d.setDescription(this.descr);
+				d.setSynonym(this.synonym);
+				
+				//Création de la maladie soignée
+				Disease disease_ind = new Disease();
+				disease_ind.setDescription(this.indication);
+				disease_ind.addListDrugIndication(d);
+				
+				//Création de la maladie causée
+				Disease disease_tox = new Disease();
+				disease_tox.setDescription(this.toxicity);
+				disease_tox.addListDrugIndication(d);
+				
+				this.listDis.add(disease_tox);
+				this.listDis.add(disease_ind);
+			}
+			match_tox = false;
+			match_ind = false;
+			match_drug = false;
 		}
 		indentation--;
 	}
@@ -162,24 +212,22 @@ public class DrugBankHandler implements ContentHandler {
 			Attributes attr) throws SAXException {
 		// TODO Auto-generated method sub
 		indentation++;
-	
-		if(element.compareTo("description") == 0 && indentation == 1){
+		if(element.compareTo("description") == 0 && indentation == 2){
 			node_descr = true;
 		}
 		
-		if(element.compareTo("toxicity") == 0 && indentation == 1){
+		if(element.compareTo("toxicity") == 0 && indentation == 2){
 			node_toxicity = true;
 		}
 		
-		if(element.compareTo("name") == 0 && indentation == 1){
+		if(element.compareTo("name") == 0 && indentation == 2){
 			node_name = true;
-			
 		}
-		if(element.compareTo("indication") == 0 && indentation == 1){
+		if(element.compareTo("indication") == 0 && indentation == 2){
 			node_indication = true;
 			
 		}
-		if(element.compareTo("synonym") == 0 && indentation == 2){
+		if(element.compareTo("synonym") == 0 && indentation == 3){
 			node_synonym = true;
 		}
 		
@@ -193,6 +241,10 @@ public class DrugBankHandler implements ContentHandler {
 
 	public Disease getResult(){
 		return this.dis;
+	}
+	
+	public ArrayList<Disease> getListResult(){
+		return this.listDis;
 	}
 	
 

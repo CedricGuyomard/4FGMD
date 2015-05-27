@@ -18,9 +18,9 @@ import javax.xml.parsers.SAXParserFactory;
 
 public class ParserDrugBank {
 
-	//private static String FILE = "drugbank.xml";
+	private static String FILE = "drugbank.xml";
 		
-	private static String FILE = "BaliseDrug.xml";
+	//private static String FILE = "BaliseDrug.xml";
 	private XMLReader saxReader;
 	
 	public ParserDrugBank() throws SAXException, IOException, ParserConfigurationException{
@@ -88,6 +88,35 @@ public class ParserDrugBank {
 	      return disease_retour;
 	}
 	
+	public ArrayList<Disease> getDrug(Drug d) throws SAXException, ParserConfigurationException{
+		  SAXParserFactory spf = SAXParserFactory.newInstance();
+		  spf.setNamespaceAware(true);
+		  SAXParser saxParser = spf.newSAXParser();
+		  saxReader = saxParser.getXMLReader();    
+		  
+		  ArrayList<Disease> disease_retour = new ArrayList<Disease>();
+
+		  DrugBankHandler dbh = new DrugBankHandler(d);
+	      saxReader.setContentHandler(dbh);
+	      
+	      Date deb = new Date();
+	      
+	      DateFormat format = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG);
+	    		 
+	      System.out.println("Début de parsage : "  + format.format(deb));
+	      try {
+			saxReader.parse(FILE);
+			disease_retour = dbh.getListResult();
+	      } catch (IOException | SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+	      }
+	      Date fin = new Date();
+	      System.out.println("Fin de parsage : "  + format.format(fin));
+	      
+	      return disease_retour;
+	}
+	
 	/*
 	public ParserDrugBank() throws JDOMException, IOException{
 		
@@ -117,20 +146,21 @@ public class ParserDrugBank {
 	
 		try {
 			ParserDrugBank pdb = new ParserDrugBank();
-			Disease d = new Disease();
-			d.setName("heparin-induced thrombocytopenia");
-			Disease retour = pdb.getDisease(d);
+			Drug d = new Drug("Lepirudin");
+		
+			ArrayList<Disease> retour = pdb.getDrug(d);
 			
-			ArrayList<Drug> test = retour.getListDrugAdverseEffect();
-			List<Drug> test1 =  retour.getListDrugIndication();
-			
+			System.out.println(retour.size());
+			//ArrayList<Drug> test = retour.getListDrugAdverseEffect();
+			//List<Drug> test1 =  retour.getListDrugIndication();
+			/*
 			for(int i = 0; i < test.size(); i++){
 				System.out.println("Drug trouvé  : "+ test.get(i).getName());
 			}
 			for(int i = 0; i < test1.size(); i++){
 				System.out.println("Drug trouvé  : "+ test1.get(i).getName());
 			}
-			
+			*/
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
