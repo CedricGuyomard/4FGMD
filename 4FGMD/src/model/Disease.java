@@ -8,6 +8,9 @@ public class Disease extends SuperClass {
 	///Nom de la maladie
 	private String name;
 	
+	// CUI
+	private String cui;
+	
 	///Description - xml
 	private String description;
 	
