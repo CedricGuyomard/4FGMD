@@ -31,6 +31,7 @@ public class Disease extends SuperClass {
 
 	
 	public Disease(){
+		synonym = new ArrayList<String>();
 		listSymptom = new ArrayList<Disease>();
 		listDrugIndication = new ArrayList<Drug>();
 		listDrugAdverseEffect = new ArrayList<Drug>();
