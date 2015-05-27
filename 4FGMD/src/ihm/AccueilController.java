@@ -336,7 +336,7 @@ public class AccueilController extends Controller{
 		//TODO faire une popover pour description medicament
 	}
 	private void research(){
-		AccueilService.Request(lvSign.getItems());
+		results.setAll(AccueilService.Request(signs));
 	}
 	private List<Disease> mergeData(List<Disease> listCouchDB, List<Disease> lCSV ,List<Disease> listMySql, List<Disease> listText, List<Disease> listXml){
 		System.out.println("Start merge data");
