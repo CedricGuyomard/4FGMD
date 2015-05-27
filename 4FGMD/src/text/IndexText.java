@@ -44,7 +44,7 @@ public class IndexText {
 	private static final String FILE = "omim.txt";
 
 	static final File INDEX_DIR = new File("drug_bank");
-	static final File INDEX_DIR_OMIM = new File("omim");
+	static final File INDEX_DIR_OMIM = new File(FILE);
 	static enum keyWord{
 		THEEND("THEEND"),RECORD("RECORD"),FIELD("FIELD");
 		String value;
