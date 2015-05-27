@@ -3,25 +3,36 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.ProgressBar;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import model.Disease;
+import model.Drug;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.queryparser.classic.ParseException;
+
+import text.TextService;
 
 
 
@@ -32,38 +43,41 @@ public class AccueilController extends Controller{
 
 	@FXML VBox boxResult;
 	@FXML HBox boxParam;
+	@FXML HBox boxTitle;
+	@FXML HBox boxTitleResult;
 	@FXML VBox boxSearch;
-
 	
-	@FXML VBox boxDisease;
-	@FXML TextField tfDisease;
-	@FXML Button bDisease;
-	@FXML ListView lvDisease;
+	ToggleGroup toggleGroup;
 	
 	@FXML VBox boxSign;
 	@FXML TextField tfSign;
 	@FXML Button bSign;
-	@FXML ListView lvSign;
+	@FXML ListView<String> lvSign;
+	@FXML Button bSignAnd;
+	@FXML Button bSignOr;
+	@FXML RadioButton rbSign;
 	
 	@FXML VBox boxDrug;
 	@FXML TextField tfDrug;
 	@FXML Button bDrug;
-	@FXML ListView lvDrug;
+	@FXML ListView<String> lvDrug;
+	@FXML Button bDrugAnd;
+	@FXML Button bDrugOr;
+	@FXML RadioButton rbDrug;
 	
 	@FXML VBox boxResultDiseases;
 	@FXML ComboBox<Disease>  cbDisResult;
 	@FXML TextArea taDisDescription;
 	@FXML HBox boxDisResult;
 	@FXML VBox boxDisSynonym;
-	@FXML ListView lvDisSynonym;
+	@FXML ListView<String> lvDisSynonym;
 	@FXML VBox boxDisSymptom;
-	@FXML ListView lvDisSymptom;
+	@FXML ListView<Disease> lvDisSymptom;
 	@FXML VBox boxDisDrugIndication;
-	@FXML ListView lvDisDrugIndication;
+	@FXML ListView<Drug> lvDisDrugIndication;
 	@FXML VBox boxDisDrugAdverseEffect;
-	@FXML ListView lvDisDrugAdverseEffect;
+	@FXML ListView<Drug> lvDisDrugAdverseEffect;
 	
-	@FXML CheckBox cb;
 	@FXML Button search;
 	
 	List<Disease> lCouchDB=new ArrayList<Disease>();
@@ -71,6 +85,23 @@ public class AccueilController extends Controller{
 	List<Disease> lMySql=new ArrayList<Disease>();
 	List<Disease> lText=new ArrayList<Disease>();
 	List<Disease> lXml=new ArrayList<Disease>();
+	
+	ListProperty<String> signs=new SimpleListProperty<String>(FXCollections.observableArrayList());
+	ListProperty<String> drugs=new SimpleListProperty<String>(FXCollections.observableArrayList());
+	ListProperty<Disease> results=new SimpleListProperty<Disease>(FXCollections.observableArrayList());
+	
+	ListProperty<String> synonyms=new SimpleListProperty<String>(FXCollections.observableArrayList());
+	ListProperty<Disease> symptoms=new SimpleListProperty<Disease>(FXCollections.observableArrayList());
+	ListProperty<Drug> drugIndications=new SimpleListProperty<Drug>(FXCollections.observableArrayList());
+	ListProperty<Drug> drugAdverseEffects=new SimpleListProperty<Drug>(FXCollections.observableArrayList());
+	
+	ChangeListener<? super Boolean> endResearchListener;
+	BooleanProperty endResearch = new SimpleBooleanProperty(false);
+	BooleanProperty endCouchDB = new SimpleBooleanProperty(false);
+	BooleanProperty endCSV = new SimpleBooleanProperty(false);
+	BooleanProperty endMySql = new SimpleBooleanProperty(false);
+	BooleanProperty endText = new SimpleBooleanProperty(false);
+	BooleanProperty endXml = new SimpleBooleanProperty(false);
 	
 	@Override
 	protected void setStartCondition() {
@@ -90,25 +121,44 @@ public class AccueilController extends Controller{
 		boxParam.prefHeightProperty().bind(boxParam.minHeightProperty());
 		boxParam.minHeightProperty().set(30);
 		boxParam.maxHeightProperty().bind(boxParam.minHeightProperty());
+
+		boxTitle.prefWidthProperty().bind(this.widthProperty());
+		boxTitle.minWidthProperty().bind(boxTitle.prefWidthProperty());
+		boxTitle.maxWidthProperty().bind(boxTitle.prefWidthProperty());
+		boxTitle.prefHeightProperty().bind(boxTitle.minHeightProperty());
+		boxTitle.minHeightProperty().set(30);
+		boxTitle.maxHeightProperty().bind(boxTitle.minHeightProperty());
+		boxTitle.setPadding(new Insets(0,50,0,50));
+		toggleGroup=new ToggleGroup();
+		rbDrug.setToggleGroup(toggleGroup);
+		rbSign.setToggleGroup(toggleGroup);
+
+		boxTitleResult.prefWidthProperty().bind(this.widthProperty());
+		boxTitleResult.minWidthProperty().bind(boxTitleResult.prefWidthProperty());
+		boxTitleResult.maxWidthProperty().bind(boxTitleResult.prefWidthProperty());
+		boxTitleResult.prefHeightProperty().bind(boxTitleResult.minHeightProperty());
+		boxTitleResult.minHeightProperty().set(30);
+		boxTitleResult.maxHeightProperty().bind(boxTitleResult.minHeightProperty());
+		boxTitleResult.setPadding(new Insets(0,50,0,50));
 		
 
 		boxResultDiseases.prefWidthProperty().bind(this.widthProperty());
 		boxResultDiseases.minWidthProperty().bind(boxResultDiseases.prefWidthProperty());
 		boxResultDiseases.maxWidthProperty().bind(boxResultDiseases.prefWidthProperty());
+		boxResultDiseases.disableProperty().bind(results.emptyProperty());
 		boxDisResult.prefWidthProperty().bind(boxResultDiseases.widthProperty().subtract(15));
 		boxDisResult.minWidthProperty().bind(boxDisResult.prefWidthProperty());
 		boxDisResult.maxWidthProperty().bind(boxDisResult.prefWidthProperty());
 		
 		
-		boxDisease.prefWidthProperty().bind(boxSearch.widthProperty().divide(3).subtract(10));
-		boxDisease.maxWidthProperty().bind(boxDisease.prefWidthProperty());
-		boxDisease.minWidthProperty().bind(boxDisease.prefWidthProperty());
-		boxSign.prefWidthProperty().bind(boxSearch.widthProperty().divide(3).subtract(10));
+		boxSign.prefWidthProperty().bind(boxSearch.widthProperty().divide(2).subtract(10));
 		boxSign.maxWidthProperty().bind(boxSign.prefWidthProperty());
 		boxSign.minWidthProperty().bind(boxSign.prefWidthProperty());
-		boxDrug.prefWidthProperty().bind(boxSearch.widthProperty().divide(3).subtract(10));
+		boxSign.disableProperty().bind(rbSign.selectedProperty().not());
+		boxDrug.prefWidthProperty().bind(boxSearch.widthProperty().divide(2).subtract(10));
 		boxDrug.maxWidthProperty().bind(boxDrug.prefWidthProperty());
 		boxDrug.minWidthProperty().bind(boxDrug.prefWidthProperty());
+		boxDrug.disableProperty().bind(rbDrug.selectedProperty().not());
 		
 
 		
@@ -128,29 +178,137 @@ public class AccueilController extends Controller{
 		search.setOnAction(e->{
 			research();
 		});
+		
+		
+		lvSign.itemsProperty().bind(signs);
+		lvDrug.itemsProperty().bind(drugs);
+		cbDisResult.itemsProperty().bind(results);
+		
+		lvSign.setCellFactory(lv -> {
+            return new ListCell<String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item == null || empty) {
+                        setText(null);
+                        setGraphic(null);
+                    } else {
+                        Label text = new Label(item);
+                        text.setPrefWidth(lvSign.getWidth()-40);
+                        text.setMaxWidth(lvSign.getWidth()-40);
+                        Label x = new Label("X");
+                        x.setMinWidth(10);
+                        x.setMaxWidth(10);
+                        x.setOnMouseClicked(e->{
+                        	signs.remove(item);
+                        });
+                        x.setTooltip(new Tooltip("Remove"));
+                        setGraphic(new HBox(text,x));
+                    }
+                }
+            };
+        });
+		lvDrug.setCellFactory(lv -> {
+            return new ListCell<String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item == null || empty) {
+                        setText(null);
+                        setGraphic(null);
+                    } else {
+                        Label text = new Label(item);
+                        text.setPrefWidth(lvDrug.getWidth()-40);
+                        text.setMaxWidth(lvDrug.getWidth()-40);
+                        Label x = new Label("X");
+                        x.setMinWidth(10);
+                        x.setMaxWidth(10);
+                        x.setOnMouseClicked(e->{
+                        	drugs.remove(item);
+                        });
+                        x.setTooltip(new Tooltip("Remove"));
+                        setGraphic(new HBox(text,x));
+                    }
+                }
+            };
+        });
+		bSignAnd.setOnAction(e->{
+			//TODO
+			if(tfSign.textProperty().isNotEmpty().get() ){
+				String text = StringUtils.capitalize(tfSign.getText().trim());
+				if(!signs.contains(text)){
+					signs.add(text);
+				}
+				tfSign.setText("");
+			}
+		});
+		bDrugAnd.setOnAction(e->{
+			if(tfSign.textProperty().isNotEmpty().get() ){
+				String text = StringUtils.capitalize(tfSign.getText().trim());
+				if(!signs.contains(text)){
+					signs.add(text);
+				}
+				tfSign.setText("");
+			}
+		});
+		//TODO
+		bSignOr.setManaged(false);
+		bSignOr.setVisible(false);
+		bDrugOr.setManaged(false);
+		bDrugOr.setVisible(false);
+		/*bSignOr.setOnAction(e->{
+			//TODO
+		});
+		bDrugOr.setOnAction(e->{
+			//TODO
+		});*/
+		
+		
+		lvDisSynonym.itemsProperty().bind(synonyms);
+		lvDisSymptom.itemsProperty().bind(symptoms);
+		lvDisDrugIndication.itemsProperty().bind(drugIndications);
+		lvDisDrugAdverseEffect.itemsProperty().bind(drugAdverseEffects);
+		
+		cbDisResult.valueProperty().addListener((obs,o,n)->{
+			taDisDescription.setText("");
+			synonyms.clear();
+			symptoms.clear();
+			drugIndications.clear();
+			drugAdverseEffects.clear();
+			if(n!=null){
+				taDisDescription.setText(n.getDescription());
+				synonyms.setAll(n.getSynonym());
+				symptoms.setAll(n.getListSymptom());
+				drugIndications.setAll(n.getListDrugIndication());
+				drugAdverseEffects.setAll(n.getListDrugAdverseEffect());
+			}
+		});
+		cbDisResult.setCellFactory(lv -> {
+            return new ListCell<Disease>() {
+                @Override
+                protected void updateItem(Disease item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item == null || empty || StringUtils.isBlank(item.getName())) {
+                        setText(null);
+                        setGraphic(null);
+                    } else {
+                    	setGraphic(new Label(item.getName()));
+                    }
+                }
+         };});
+		endResearch.bind(endCouchDB.and(endMySql).and(endText).and(endXml).and(endCSV));
 	}
 	private void research(){
-		BooleanProperty endResearch = new SimpleBooleanProperty(false);
-		BooleanProperty endCouchDB = new SimpleBooleanProperty(false);
-		BooleanProperty endCSV = new SimpleBooleanProperty(false);
-		BooleanProperty endMySql = new SimpleBooleanProperty(false);
-		BooleanProperty endText = new SimpleBooleanProperty(false);
-		BooleanProperty endXml = new SimpleBooleanProperty(false);
-		//ButtonType close = ButtonType.CLOSE;
-		ButtonType close = new ButtonType("Close");
-		Alert alert = new Alert(AlertType.NONE, "",close);
-		Label label=new Label("Research ...");
-		ProgressBar progressBar = new ProgressBar();
-		VBox vBox = new VBox(label,progressBar);
-		alert.setGraphic(vBox);
-		alert.getDialogPane().setPrefWidth(200);;
-		progressBar.setPrefWidth(200);
-		progressBar.setMinWidth(200);
-		progressBar.setMaxWidth(200);
-		vBox.setPrefWidth(200);
-		vBox.setMinWidth(200);
-		vBox.setMaxWidth(200);
-		alert.show();
+			AccueilService.Request(lvSign.getItems());
+	}
+	/*private void research(){
+		endCouchDB.set(false);
+		endCSV.set(false);
+		endMySql.set(false);
+		endText.set(false);
+		endXml.set(false);
+		
+		Alert alert = App.progressAlert("Research ...");
 		Task<List<Disease>> taskCouchDB = new Task<List<Disease>>() {
 			@Override
 			protected List<Disease> call() throws Exception {
@@ -172,7 +330,7 @@ public class AccueilController extends Controller{
 		Task<List<Disease>> taskText = new Task<List<Disease>>() {
 			@Override
 			protected List<Disease> call() throws Exception {
-				return researchText();
+				return researchText(tfSign.getText());
 			}
 		};
 		Task<List<Disease>> taskXml = new Task<List<Disease>>() {
@@ -181,11 +339,11 @@ public class AccueilController extends Controller{
 				return researchXml();
 			}
 		};
-		/*new Thread(taskCouchDB).start();
+		new Thread(taskCouchDB).start();
 		new Thread(taskCSV).start();
 		new Thread(taskMySql).start();
 		new Thread(taskText).start();
-		new Thread(taskXml).start();*/
+		new Thread(taskXml).start();
 
 		lCouchDB.clear();
 		lCSV.clear();
@@ -199,20 +357,14 @@ public class AccueilController extends Controller{
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
+			System.out.println("fin search couch");
 		});
 		taskCouchDB.setOnCancelled(e->{
 			endCouchDB.set(true);
 			try{
 				taskCouchDB.getException().printStackTrace();
 			}catch(Exception ex){}
-			new Alert(AlertType.ERROR, "Error to collect CouchDB datas.", null).show();
-		});
-		taskCSV.setOnCancelled(e->{
-			endCSV.set(true);
-			try{
-				taskCSV.getException().printStackTrace();
-			}catch(Exception ex){}
-			new Alert(AlertType.ERROR, "Error to collect CSV datas.", null).show();
+			new Alert(AlertType.ERROR, "Error to collect CouchDB datas.").show();
 		});
 		taskCSV.setOnSucceeded(e->{
 			endCSV.set(true);
@@ -221,6 +373,14 @@ public class AccueilController extends Controller{
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
+			System.out.println("fin search CSV");
+		});
+		taskCSV.setOnCancelled(e->{
+			endCSV.set(true);
+			try{
+				taskCSV.getException().printStackTrace();
+			}catch(Exception ex){}
+			new Alert(AlertType.ERROR, "Error to collect CSV datas.").show();
 		});
 		taskMySql.setOnSucceeded(e->{
 			endMySql.set(true);
@@ -229,13 +389,14 @@ public class AccueilController extends Controller{
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
+			System.out.println("fin search MySql");
 		});
 		taskMySql.setOnCancelled(e->{
 			endMySql.set(true);
 			try{
 				taskMySql.getException().printStackTrace();
 			}catch(Exception ex){}
-			new Alert(AlertType.ERROR, "Error to collect MySQL datas.", null).show();
+			new Alert(AlertType.ERROR, "Error to collect MySQL datas.").show();
 		});
 		taskText.setOnSucceeded(e->{
 			endText.set(true);
@@ -244,13 +405,14 @@ public class AccueilController extends Controller{
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
+			System.out.println("fin search Text");
 		});
 		taskText.setOnCancelled(e->{
 			endText.set(true);
 			try{
 				taskText.getException().printStackTrace();
 			}catch(Exception ex){}
-			new Alert(AlertType.ERROR, "Error to collect Text datas.", null).show();
+			new Alert(AlertType.ERROR, "Error to collect Text datas.").show();
 		});
 		taskXml.setOnSucceeded(e->{
 			endXml.set(true);
@@ -259,15 +421,15 @@ public class AccueilController extends Controller{
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
+			System.out.println("fin search xml");
 		});
 		taskXml.setOnCancelled(e->{
 			endXml.set(true);
 			try{
 				taskXml.getException().printStackTrace();
 			}catch(Exception ex){}
-			new Alert(AlertType.ERROR, "Error to collect XML datas.", null).show();
+			new Alert(AlertType.ERROR, "Error to collect XML datas.").show();
 		});
-		endResearch.bind(endCouchDB.and(endMySql).and(endText).and(endXml));
 
 		Task<List<Disease>> taskMerge = new Task<List<Disease>>() {
 			@Override
@@ -275,15 +437,24 @@ public class AccueilController extends Controller{
 				return mergeData(lCouchDB, lCSV, lMySql, lText, lXml);
 			}
 		};
-		endResearch.addListener((obs,o,n)->{
+		try{
+			endResearch.removeListener(endResearchListener);
+		}catch(Exception e){}
+		endResearchListener = (obs,o,n)->{
 			if(n){
-				label.setText("Data merging ...");
+				alert.setTitle("Data merging ...");
 				new Thread(taskMerge).start();
 			}
-		});
+		};
+		endResearch.addListener(endResearchListener);
 		taskMerge.setOnSucceeded(e->{
-			//TODO affichage données
-			//TODO gras sur les champs de recherche
+			try {
+				results.setAll(taskMerge.get());
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+			cbDisResult.valueProperty().set(null);
+			System.out.println("fin merge");
         	alert.close();
 		});
 		taskMerge.setOnFailed(e->{
@@ -291,7 +462,7 @@ public class AccueilController extends Controller{
 			try{
 				taskText.getException().printStackTrace();
 			}catch(Exception ex){}
-			new Alert(AlertType.ERROR, "Error to merge datas.", null).show();
+			new Alert(AlertType.ERROR, "Error to merge datas.").show();
 		});
 		alert.showingProperty().addListener((obs,o,n)->{
 			if(!n && o){
@@ -300,23 +471,29 @@ public class AccueilController extends Controller{
 				}
 			}
 		});
-	}
+	}*/
 	private List<Disease> mergeData(List<Disease> listCouchDB, List<Disease> lCSV ,List<Disease> listMySql, List<Disease> listText, List<Disease> listXml){
-		return listXml;
+		System.out.println("Start merge data");
+		return listText;
 	}
 	private List<Disease> researchCouchDB(){
+		System.out.println("Start research CouchDB");
 		return new ArrayList<Disease>();
 	}
 	private List<Disease> researchCSV(){
+		System.out.println("Start research CSV");
 		return new ArrayList<Disease>();
 	}
 	private List<Disease> researchMySql(){
+		System.out.println("Start research MySql");
 		return new ArrayList<Disease>();
 	}
-	private List<Disease> researchText(){
-		return new ArrayList<Disease>();
+	private List<Disease> researchText(String s) throws IOException, ParseException{
+		System.out.println("Start research Text");
+		return TextService.getDiseases(s);
 	}
 	private List<Disease> researchXml(){
+		System.out.println("Start research Xml");
 		return new ArrayList<Disease>();
 	}
 	

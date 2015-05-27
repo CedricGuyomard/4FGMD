@@ -53,31 +53,23 @@ public class SqlParser {
 		return rs;
 	}
 	
+	public Disease getAllDrug(Disease maladie)
+	{
+		maladie = getDrugIndication(maladie);
+		maladie = getDrugAdverseEffect(maladie);
+		
+		return maladie;
+	}
+	
 	public Disease getDrugIndication(Disease maladie)
 	{
 		String request;
 		ArrayList<Drug> listDrug = new ArrayList<Drug>();
 		ResultSet rs;
-		request = "SELECT Distinct(drug_name1)"
+		
+		request = "SELECT Distinct(drug_name2), lr."
 				+ "FROM label_mapping lm, indications_raw lr "
-				+ "WHERE lm.label = lr.label AND lr.i_name = \""+ maladie.getName()+"\";";
-		try
-		{
-			rs = this.SqlRequest(request);
-			if(rs != null )
-			{
-				while(rs.next())
-				{
-					listDrug.add(new Drug(rs.getString(1)));
-				}
-			}
-		}catch(SQLException e)
-		{
-			e.printStackTrace();
-		}
-		request = "SELECT Distinct(drug_name2)"
-				+ "FROM label_mapping lm, indications_raw lr "
-				+ "WHERE lm.label = lr.label AND lr.i_name = \""+ maladie.getName()+"\";";
+				+ "WHERE lm.label = lr.label AND lr.i_name LIKE %upper(\""+ maladie.getName()+"\")%;";
 		try
 		{
 			rs = this.SqlRequest(request);
@@ -102,26 +94,10 @@ public class SqlParser {
 		String request;
 		ArrayList<Drug> listDrug = new ArrayList<Drug>();
 		ResultSet rs;
-		request = "SELECT Distinct(drug_name1)"
-				+ "FROM label_mapping lm, adverse_effects_raw lr "
-				+ "WHERE lm.label = lr.label AND lr.se_name = \""+ maladie.getName()+"\";";
-		try
-		{
-			rs = this.SqlRequest(request);
-			if(rs != null)
-			{
-				while(rs.next())
-				{
-					listDrug.add(new Drug(rs.getString(1)));
-				}
-			}
-		}catch(SQLException e)
-		{
-			e.printStackTrace();
-		}
+		
 		request = "SELECT Distinct(drug_name2)"
 				+ "FROM label_mapping lm, adverse_effects_raw lr "
-				+ "WHERE lm.label = lr.label AND lr.se_name = \""+ maladie.getName()+"\";";
+				+ "WHERE lm.label = lr.label AND AND lr.se_name LIKE %upper(\""+ maladie.getName()+"\")%;";
 		try
 		{
 			rs = this.SqlRequest(request);
@@ -138,6 +114,64 @@ public class SqlParser {
 		}
 		maladie.setListDrugAdverseEffect(listDrug);
 			return maladie;
+	}
+	
+	public ArrayList<Disease> getDiseaseIndication(Drug drug)	{
+		String request;
+		ArrayList<Disease> listDisease = new ArrayList<Disease>();
+		ResultSet rs;
+		Disease ds = new Disease();
+		
+		request = "SELECT Distinct(i_name)"
+				+ "FROM label_mapping lm, indications_raw lr "
+				+ "WHERE lm.label = lr.label AND AND lm.drug_name2 LIKE %upper(\""+ drug.getName() +"\")%;";
+		try
+		{
+			rs = this.SqlRequest(request);
+			if(rs != null)
+			{
+				while(rs.next())
+				{
+					ds.setName(rs.getString(1));
+					ds = this.getAllDrug(ds);
+					listDisease.add(ds);
+				}
+			}
+		}catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return listDisease;
+	}
+	
+	public ArrayList<Disease> getDiseaseAdvEffect(Drug drug)	{
+		String request;
+		ArrayList<Disease> listDisease = new ArrayList<Disease>();
+		ResultSet rs;
+		Disease ds = new Disease();
+		
+		request = "SELECT Distinct(se_name)"
+				+ "FROM label_mapping lm, adverse_effects_raw lr "
+				+ "WHERE lm.label = lr.label AND AND upper(lm.drug_name2) LIKE %upper(\""+ drug.getName() +"\")%;";
+		try
+		{
+			rs = this.SqlRequest(request);
+			if(rs != null)
+			{
+				while(rs.next())
+				{
+					ds.setName(rs.getString(1));
+					ds = this.getAllDrug(ds);
+					listDisease.add(ds);
+				}
+			}
+		}catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return listDisease;
 	}
 	
 	public void CloseDB()

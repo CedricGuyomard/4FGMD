@@ -11,6 +11,9 @@ public class Disease extends SuperClass {
 	// CUI
 	private String cui;
 	
+	// omim
+	private String omim;
+	
 	///Description - xml
 	private String description;
 	
@@ -31,6 +34,9 @@ public class Disease extends SuperClass {
 
 	
 	public Disease(){
+		name = "";
+		cui = "";
+		omim = "";
 		listSymptom = new ArrayList<Disease>();
 		listDrugIndication = new ArrayList<Drug>();
 		listDrugAdverseEffect = new ArrayList<Drug>();
@@ -41,6 +47,22 @@ public class Disease extends SuperClass {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public String getCui(){
+		return cui;
+	}
+	
+	public void setCui(String s){
+		cui = s;
+	}
+	
+	public String getOmim(){
+		return omim;
+	}
+	
+	public void setOmim(String s){
+		omim = s;
 	}
 
 	public List<String> getSynonym() {
