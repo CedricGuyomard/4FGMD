@@ -67,6 +67,7 @@ public class AccueilController extends Controller{
 	@FXML Button search;
 	
 	List<Disease> lCouchDB=new ArrayList<Disease>();
+	List<Disease> lCSV=new ArrayList<Disease>();
 	List<Disease> lMySql=new ArrayList<Disease>();
 	List<Disease> lText=new ArrayList<Disease>();
 	List<Disease> lXml=new ArrayList<Disease>();
@@ -131,6 +132,7 @@ public class AccueilController extends Controller{
 	private void research(){
 		BooleanProperty endResearch = new SimpleBooleanProperty(false);
 		BooleanProperty endCouchDB = new SimpleBooleanProperty(false);
+		BooleanProperty endCSV = new SimpleBooleanProperty(false);
 		BooleanProperty endMySql = new SimpleBooleanProperty(false);
 		BooleanProperty endText = new SimpleBooleanProperty(false);
 		BooleanProperty endXml = new SimpleBooleanProperty(false);
@@ -155,6 +157,12 @@ public class AccueilController extends Controller{
 				return researchCouchDB();
 			}
 		};
+		Task<List<Disease>> taskCSV = new Task<List<Disease>>() {
+			@Override
+			protected List<Disease> call() throws Exception {
+				return researchCSV();
+			}
+		};
 		Task<List<Disease>> taskMySql = new Task<List<Disease>>() {
 			@Override
 			protected List<Disease> call() throws Exception {
@@ -173,12 +181,14 @@ public class AccueilController extends Controller{
 				return researchXml();
 			}
 		};
-		new Thread(taskCouchDB).start();
+		/*new Thread(taskCouchDB).start();
+		new Thread(taskCSV).start();
 		new Thread(taskMySql).start();
 		new Thread(taskText).start();
-		new Thread(taskXml).start();
+		new Thread(taskXml).start();*/
 
 		lCouchDB.clear();
+		lCSV.clear();
 		lMySql.clear();
 		lText.clear();
 		lXml.clear();
@@ -196,6 +206,21 @@ public class AccueilController extends Controller{
 				taskCouchDB.getException().printStackTrace();
 			}catch(Exception ex){}
 			new Alert(AlertType.ERROR, "Error to collect CouchDB datas.", null).show();
+		});
+		taskCSV.setOnCancelled(e->{
+			endCSV.set(true);
+			try{
+				taskCSV.getException().printStackTrace();
+			}catch(Exception ex){}
+			new Alert(AlertType.ERROR, "Error to collect CSV datas.", null).show();
+		});
+		taskCSV.setOnSucceeded(e->{
+			endCSV.set(true);
+			try {
+				lCSV.addAll(taskCSV.get());
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
 		});
 		taskMySql.setOnSucceeded(e->{
 			endMySql.set(true);
@@ -247,7 +272,7 @@ public class AccueilController extends Controller{
 		Task<List<Disease>> taskMerge = new Task<List<Disease>>() {
 			@Override
 			protected List<Disease> call() throws Exception {
-				return mergeData(lCouchDB, lMySql, lText, lXml);
+				return mergeData(lCouchDB, lCSV, lMySql, lText, lXml);
 			}
 		};
 		endResearch.addListener((obs,o,n)->{
@@ -276,10 +301,13 @@ public class AccueilController extends Controller{
 			}
 		});
 	}
-	private List<Disease> mergeData(List<Disease> listCouchDB ,List<Disease> listMySql, List<Disease> listText, List<Disease> listXml){
+	private List<Disease> mergeData(List<Disease> listCouchDB, List<Disease> lCSV ,List<Disease> listMySql, List<Disease> listText, List<Disease> listXml){
 		return listXml;
 	}
 	private List<Disease> researchCouchDB(){
+		return new ArrayList<Disease>();
+	}
+	private List<Disease> researchCSV(){
 		return new ArrayList<Disease>();
 	}
 	private List<Disease> researchMySql(){
