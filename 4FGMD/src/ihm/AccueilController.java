@@ -333,7 +333,47 @@ public class AccueilController extends Controller{
 			}
 		});
 		endResearch.bind(endCouchDB.and(endMySql).and(endText).and(endXml).and(endCSV));
-		//TODO faire une popover pour description medicament
+		//TODO faire une popover pour description medicament/origine symptome ...
+		
+		lvDisSymptom.setCellFactory(lv -> {
+            return new ListCell<Disease>() {
+                @Override
+                protected void updateItem(Disease item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item == null || empty || StringUtils.isBlank(item.getName())) {
+                        setText(null);
+                        setGraphic(null);
+                    } else {
+                    	setGraphic(new Label(item.getName()));
+                    }
+                }
+         };});
+		lvDisDrugIndication.setCellFactory(lv -> {
+            return new ListCell<Drug>() {
+                @Override
+                protected void updateItem(Drug item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item == null || empty || StringUtils.isBlank(item.getName())) {
+                        setText(null);
+                        setGraphic(null);
+                    } else {
+                    	setGraphic(new Label(item.getName()));
+                    }
+                }
+         };});
+		lvDisDrugAdverseEffect.setCellFactory(lv -> {
+            return new ListCell<Drug>() {
+                @Override
+                protected void updateItem(Drug item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item == null || empty || StringUtils.isBlank(item.getName())) {
+                        setText(null);
+                        setGraphic(null);
+                    } else {
+                    	setGraphic(new Label(item.getName()));
+                    }
+                }
+         };});
 	}
 	private void research(){
 		results.setAll(AccueilService.Request(signs));
