@@ -7,7 +7,7 @@ import model.Disease;
 
 public class Couchdb {
 	
-	public Disease get_disease_info(Disease d) throws CouchdbException, IOException
+	public static Disease get_disease_info(Disease d) throws CouchdbException, IOException
 	{
 		String s;
 		ArrayList<Disease> ar = new ArrayList<Disease>();
@@ -31,19 +31,30 @@ public class Couchdb {
 		String[] tokens = s.split(";");
 		d.setSynonym(Arrays.asList(tokens[0].split("\\$")));
 		
-		for(String str : tokens[1].split("\\$"))
+		if(!tokens[1].equals("empty"))
 		{
-			System.out.println(str + " ");
-			Disease tmp = new Disease();
-			tmp.setName(str);
-			ar.add(tmp);
+			for(String str : tokens[1].split("\\$"))
+			{
+				Disease tmp = new Disease();
+				tmp.setName(str);
+				ar.add(tmp);
+			}
 		}
 		
 		d.setListSymptom(ar);
+		
+		if(!tokens[2].equals("empty")){
+			d.setCui(tokens[2]);
+		}
+		
+		if(!tokens[3].equals("empty")){
+			d.setOmim(tokens[3]);
+		}
+		
 		return d;
 	}
 	
-	public ArrayList<Disease> get_diseases_from_clinical_sign(String cs) throws IOException
+	public static ArrayList<Disease> get_diseases_from_clinical_sign(String cs) throws IOException
 	{
 		ArrayList<Disease> ar_d = new ArrayList<Disease>();
 		String s;
@@ -57,15 +68,15 @@ public class Couchdb {
 		Process python = Runtime.getRuntime().exec(cmd);
 		BufferedReader scriptOutput = new BufferedReader(new InputStreamReader(python.getInputStream()));
 		s = scriptOutput.readLine();
-		System.out.println(s);
 		
-		String[] tokens = s.split("\\$");
-		for(String str : tokens)
+		if (!s.equals("empty"))
 		{
-			System.out.println(str);
-			Disease tmp = new Disease();
-			tmp.setName(str);
-			ar_d.add(tmp);
+			for(String str : s.split("\\$"))
+			{
+				Disease tmp = new Disease();
+				tmp.setName(str);
+				ar_d.add(tmp);
+			}
 		}
 		return ar_d;
 	}
