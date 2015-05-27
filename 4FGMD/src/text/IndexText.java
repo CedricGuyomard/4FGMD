@@ -193,8 +193,8 @@ public class IndexText {
 		//doc.add(new StoredField("id",map.get("NO"))); // stored not indexed
 		doc.add(new TextField("NO",map.get("NO"),Field.Store.YES)); // indexed and stored
 		doc.add(new TextField("TI",map.get("TI"),Field.Store.YES)); // indexed and stored
-		doc.add(new TextField("TX",map.get("TX"),Field.Store.NO)); // indexed
-		doc.add(new TextField("CS",map.get("CS"),Field.Store.NO)); // indexed
+		doc.add(new TextField("TX",map.get("TX"),Field.Store.YES)); // indexed
+		doc.add(new TextField("CS",map.get("CS"),Field.Store.YES)); // indexed
 		if (writer.getConfig().getOpenMode() == OpenMode.CREATE) {
 			System.out.println("adding " + map.get("NO"));
 			writer.addDocument(doc);
@@ -213,16 +213,16 @@ public class IndexText {
 		});
 	}
 	private static void getNO(HashMap<String, String> map,BufferedReader br,String str) {
-		map.replace("NO", map.get("NO")+" "+str.trim());
+		map.replace("NO", map.get("NO")+" "+str);
 	}
 	private static void getTI(HashMap<String, String> map,BufferedReader br,String str) {
-		map.replace("TI", map.get("TI")+" "+str.trim());
+		map.replace("TI", map.get("TI")+" "+str);
 	}
 	private static void getTX(HashMap<String, String> map,BufferedReader br,String str) {
-		map.replace("TX", map.get("TX")+" "+str.trim());
+		map.replace("TX", map.get("TX")+" "+str);
 	}
 	private static void getCS(HashMap<String, String> map,BufferedReader br,String str){
-		map.replace("CS", map.get("CS")+" "+str.trim());
+		map.replace("CS", map.get("CS")+" "+str);
 	}
 	private static String getDetails(BufferedReader br,String line,lamdaString fct) throws IOException{
 		while((line=br.readLine())!=null){
@@ -230,7 +230,9 @@ public class IndexText {
 				return line;
 			}
 			if(!StringUtils.isBlank(line)){
-				fct.execute(line);
+				fct.execute(line.trim());
+			}else{
+				fct.execute("\n");
 			}
 		}
 		return line;

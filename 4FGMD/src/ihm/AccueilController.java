@@ -26,6 +26,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.StringConverter;
 import model.Disease;
 import model.Drug;
 
@@ -33,10 +34,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.queryparser.classic.ParseException;
 
 import text.TextService;
-
-
-
-
 
 @FxmlSource("fxml/Accueil.fxml")
 public class AccueilController extends Controller{
@@ -105,24 +102,22 @@ public class AccueilController extends Controller{
 	
 	@Override
 	protected void setStartCondition() {
-		boxResult.prefWidthProperty().bind(this.widthProperty());
-		boxResult.minWidthProperty().bind(boxResult.prefWidthProperty());
-		boxResult.maxWidthProperty().bind(boxResult.prefWidthProperty());
-		boxSearch.prefWidthProperty().bind(this.widthProperty());
+		
+		boxSearch.prefWidthProperty().bind(this.prefWidthProperty());
 		boxSearch.minWidthProperty().bind(boxSearch.prefWidthProperty());
 		boxSearch.maxWidthProperty().bind(boxSearch.prefWidthProperty());
-		boxSearch.prefHeightProperty().bind(this.heightProperty().multiply(2/5));
+		boxSearch.prefHeightProperty().set(4000);
 		boxSearch.minHeightProperty().set(150);
 		boxSearch.maxHeightProperty().bind(this.heightProperty().multiply(2/5));
 
-		boxParam.prefWidthProperty().bind(this.widthProperty());
+		boxParam.prefWidthProperty().bind(this.prefWidthProperty());
 		boxParam.minWidthProperty().bind(boxParam.prefWidthProperty());
 		boxParam.maxWidthProperty().bind(boxParam.prefWidthProperty());
 		boxParam.prefHeightProperty().bind(boxParam.minHeightProperty());
 		boxParam.minHeightProperty().set(30);
 		boxParam.maxHeightProperty().bind(boxParam.minHeightProperty());
 
-		boxTitle.prefWidthProperty().bind(this.widthProperty());
+		boxTitle.prefWidthProperty().bind(this.prefWidthProperty());
 		boxTitle.minWidthProperty().bind(boxTitle.prefWidthProperty());
 		boxTitle.maxWidthProperty().bind(boxTitle.prefWidthProperty());
 		boxTitle.prefHeightProperty().bind(boxTitle.minHeightProperty());
@@ -133,7 +128,7 @@ public class AccueilController extends Controller{
 		rbDrug.setToggleGroup(toggleGroup);
 		rbSign.setToggleGroup(toggleGroup);
 
-		boxTitleResult.prefWidthProperty().bind(this.widthProperty());
+		boxTitleResult.prefWidthProperty().bind(this.prefWidthProperty());
 		boxTitleResult.minWidthProperty().bind(boxTitleResult.prefWidthProperty());
 		boxTitleResult.maxWidthProperty().bind(boxTitleResult.prefWidthProperty());
 		boxTitleResult.prefHeightProperty().bind(boxTitleResult.minHeightProperty());
@@ -141,14 +136,6 @@ public class AccueilController extends Controller{
 		boxTitleResult.maxHeightProperty().bind(boxTitleResult.minHeightProperty());
 		boxTitleResult.setPadding(new Insets(0,50,0,50));
 		
-
-		boxResultDiseases.prefWidthProperty().bind(this.widthProperty());
-		boxResultDiseases.minWidthProperty().bind(boxResultDiseases.prefWidthProperty());
-		boxResultDiseases.maxWidthProperty().bind(boxResultDiseases.prefWidthProperty());
-		boxResultDiseases.disableProperty().bind(results.emptyProperty());
-		boxDisResult.prefWidthProperty().bind(boxResultDiseases.widthProperty().subtract(15));
-		boxDisResult.minWidthProperty().bind(boxDisResult.prefWidthProperty());
-		boxDisResult.maxWidthProperty().bind(boxDisResult.prefWidthProperty());
 		
 		
 		boxSign.prefWidthProperty().bind(boxSearch.widthProperty().divide(2).subtract(10));
@@ -159,6 +146,31 @@ public class AccueilController extends Controller{
 		boxDrug.maxWidthProperty().bind(boxDrug.prefWidthProperty());
 		boxDrug.minWidthProperty().bind(boxDrug.prefWidthProperty());
 		boxDrug.disableProperty().bind(rbDrug.selectedProperty().not());
+		
+		
+
+		boxResult.prefWidthProperty().bind(this.prefWidthProperty());
+		boxResult.minWidthProperty().bind(boxResult.prefWidthProperty());
+		boxResult.maxWidthProperty().bind(boxResult.prefWidthProperty());
+		boxResult.prefHeightProperty().set(4000);
+		boxResult.minHeightProperty().set(300);
+		//boxResult.maxHeightProperty().bind(this.prefWidthProperty().multiply(3/5));
+
+		boxResultDiseases.prefWidthProperty().bind(boxResult.widthProperty());
+		boxResultDiseases.minWidthProperty().bind(boxResultDiseases.prefWidthProperty());
+		boxResultDiseases.maxWidthProperty().bind(boxResultDiseases.prefWidthProperty());
+		boxResultDiseases.prefHeightProperty().bind(boxResult.heightProperty().subtract(20));
+		boxResultDiseases.minHeightProperty().bind(boxResultDiseases.prefHeightProperty());
+		boxResultDiseases.maxHeightProperty().bind(boxResultDiseases.prefHeightProperty());
+		
+		boxResultDiseases.disableProperty().bind(results.emptyProperty());
+		
+		boxDisResult.prefWidthProperty().bind(boxResultDiseases.widthProperty().subtract(15));
+		boxDisResult.minWidthProperty().bind(boxDisResult.prefWidthProperty());
+		boxDisResult.maxWidthProperty().bind(boxDisResult.prefWidthProperty());
+		boxDisResult.prefHeightProperty().bind(boxResultDiseases.prefHeightProperty().subtract(15));
+		boxDisResult.minHeightProperty().bind(boxDisResult.prefHeightProperty());
+		boxDisResult.maxHeightProperty().bind(boxDisResult.prefHeightProperty());
 		
 
 		
@@ -174,6 +186,20 @@ public class AccueilController extends Controller{
 		boxDisDrugAdverseEffect.prefWidthProperty().bind(boxDisResult.widthProperty().divide(4).subtract(30/4));
 		boxDisDrugAdverseEffect.maxWidthProperty().bind(boxDisDrugAdverseEffect.prefWidthProperty());
 		boxDisDrugAdverseEffect.minWidthProperty().bind(boxDisDrugAdverseEffect.prefWidthProperty());
+		
+		/*boxDisSynonym.prefHeightProperty().bind(boxDisResult.heightProperty().subtract(30));
+		boxDisSynonym.maxHeightProperty().bind(boxDisSynonym.prefHeightProperty());
+		boxDisSynonym.minHeightProperty().bind(boxDisSynonym.prefHeightProperty());
+		boxDisSymptom.prefHeightProperty().bind(boxDisSynonym.prefHeightProperty());
+		boxDisSymptom.maxHeightProperty().bind(boxDisSymptom.prefHeightProperty());
+		boxDisSymptom.minHeightProperty().bind(boxDisSymptom.prefHeightProperty());
+		boxDisDrugIndication.prefHeightProperty().bind(boxDisSynonym.prefHeightProperty());
+		boxDisDrugIndication.maxHeightProperty().bind(boxDisDrugIndication.prefHeightProperty());
+		boxDisDrugIndication.minHeightProperty().bind(boxDisDrugIndication.prefHeightProperty());
+		boxDisDrugAdverseEffect.prefHeightProperty().bind(boxDisSynonym.prefHeightProperty());
+		boxDisDrugAdverseEffect.maxHeightProperty().bind(boxDisDrugAdverseEffect.prefHeightProperty());
+		boxDisDrugAdverseEffect.minHeightProperty().bind(boxDisDrugAdverseEffect.prefHeightProperty());*/
+		
 		
 		search.setOnAction(e->{
 			research();
@@ -296,182 +322,22 @@ public class AccueilController extends Controller{
                     }
                 }
          };});
+		cbDisResult.setConverter(new StringConverter<Disease>() {
+			@Override
+			public String toString(Disease object) {
+				return object.getName();
+			}
+			@Override
+			public Disease fromString(String string) {
+				return null;
+			}
+		});
 		endResearch.bind(endCouchDB.and(endMySql).and(endText).and(endXml).and(endCSV));
+		//TODO faire une popover pour description medicament
 	}
 	private void research(){
-			AccueilService.Request(lvSign.getItems());
+		AccueilService.Request(lvSign.getItems());
 	}
-	/*private void research(){
-		endCouchDB.set(false);
-		endCSV.set(false);
-		endMySql.set(false);
-		endText.set(false);
-		endXml.set(false);
-		
-		Alert alert = App.progressAlert("Research ...");
-		Task<List<Disease>> taskCouchDB = new Task<List<Disease>>() {
-			@Override
-			protected List<Disease> call() throws Exception {
-				return researchCouchDB();
-			}
-		};
-		Task<List<Disease>> taskCSV = new Task<List<Disease>>() {
-			@Override
-			protected List<Disease> call() throws Exception {
-				return researchCSV();
-			}
-		};
-		Task<List<Disease>> taskMySql = new Task<List<Disease>>() {
-			@Override
-			protected List<Disease> call() throws Exception {
-				return researchMySql();
-			}
-		};
-		Task<List<Disease>> taskText = new Task<List<Disease>>() {
-			@Override
-			protected List<Disease> call() throws Exception {
-				return researchText(tfSign.getText());
-			}
-		};
-		Task<List<Disease>> taskXml = new Task<List<Disease>>() {
-			@Override
-			protected List<Disease> call() throws Exception {
-				return researchXml();
-			}
-		};
-		new Thread(taskCouchDB).start();
-		new Thread(taskCSV).start();
-		new Thread(taskMySql).start();
-		new Thread(taskText).start();
-		new Thread(taskXml).start();
-
-		lCouchDB.clear();
-		lCSV.clear();
-		lMySql.clear();
-		lText.clear();
-		lXml.clear();
-		taskCouchDB.setOnSucceeded(e->{
-			endCouchDB.set(true);
-			try {
-				lCouchDB.addAll(taskCouchDB.get());
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
-			System.out.println("fin search couch");
-		});
-		taskCouchDB.setOnCancelled(e->{
-			endCouchDB.set(true);
-			try{
-				taskCouchDB.getException().printStackTrace();
-			}catch(Exception ex){}
-			new Alert(AlertType.ERROR, "Error to collect CouchDB datas.").show();
-		});
-		taskCSV.setOnSucceeded(e->{
-			endCSV.set(true);
-			try {
-				lCSV.addAll(taskCSV.get());
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
-			System.out.println("fin search CSV");
-		});
-		taskCSV.setOnCancelled(e->{
-			endCSV.set(true);
-			try{
-				taskCSV.getException().printStackTrace();
-			}catch(Exception ex){}
-			new Alert(AlertType.ERROR, "Error to collect CSV datas.").show();
-		});
-		taskMySql.setOnSucceeded(e->{
-			endMySql.set(true);
-			try {
-				lMySql.addAll(taskMySql.get());
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
-			System.out.println("fin search MySql");
-		});
-		taskMySql.setOnCancelled(e->{
-			endMySql.set(true);
-			try{
-				taskMySql.getException().printStackTrace();
-			}catch(Exception ex){}
-			new Alert(AlertType.ERROR, "Error to collect MySQL datas.").show();
-		});
-		taskText.setOnSucceeded(e->{
-			endText.set(true);
-			try {
-				lText.addAll(taskText.get());
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
-			System.out.println("fin search Text");
-		});
-		taskText.setOnCancelled(e->{
-			endText.set(true);
-			try{
-				taskText.getException().printStackTrace();
-			}catch(Exception ex){}
-			new Alert(AlertType.ERROR, "Error to collect Text datas.").show();
-		});
-		taskXml.setOnSucceeded(e->{
-			endXml.set(true);
-			try {
-				lXml.addAll(taskXml.get());
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
-			System.out.println("fin search xml");
-		});
-		taskXml.setOnCancelled(e->{
-			endXml.set(true);
-			try{
-				taskXml.getException().printStackTrace();
-			}catch(Exception ex){}
-			new Alert(AlertType.ERROR, "Error to collect XML datas.").show();
-		});
-
-		Task<List<Disease>> taskMerge = new Task<List<Disease>>() {
-			@Override
-			protected List<Disease> call() throws Exception {
-				return mergeData(lCouchDB, lCSV, lMySql, lText, lXml);
-			}
-		};
-		try{
-			endResearch.removeListener(endResearchListener);
-		}catch(Exception e){}
-		endResearchListener = (obs,o,n)->{
-			if(n){
-				alert.setTitle("Data merging ...");
-				new Thread(taskMerge).start();
-			}
-		};
-		endResearch.addListener(endResearchListener);
-		taskMerge.setOnSucceeded(e->{
-			try {
-				results.setAll(taskMerge.get());
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
-			cbDisResult.valueProperty().set(null);
-			System.out.println("fin merge");
-        	alert.close();
-		});
-		taskMerge.setOnFailed(e->{
-        	alert.close();
-			try{
-				taskText.getException().printStackTrace();
-			}catch(Exception ex){}
-			new Alert(AlertType.ERROR, "Error to merge datas.").show();
-		});
-		alert.showingProperty().addListener((obs,o,n)->{
-			if(!n && o){
-				if(!taskMerge.isDone()){
-					alert.show();
-				}
-			}
-		});
-	}*/
 	private List<Disease> mergeData(List<Disease> listCouchDB, List<Disease> lCSV ,List<Disease> listMySql, List<Disease> listText, List<Disease> listXml){
 		System.out.println("Start merge data");
 		return listText;
