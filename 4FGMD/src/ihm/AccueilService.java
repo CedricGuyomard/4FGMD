@@ -13,7 +13,24 @@ import couchdb.Couchdb;
 import couchdb.CouchdbException;
 
 public class AccueilService {
+	
 	public static List<Disease> Request(List<String> listDiseaseName){
+		//TODO Parser la requete pour differencier ou et or
+		List<Disease> listDisease = new ArrayList<Disease>();
+		
+		listDisease = getSynonim(listDiseaseName);
+		
+		
+		
+		return listDisease;
+	}
+	
+	private static List<Disease> getDrug(List<Disease> listDisease){
+		
+		return listDisease;
+	}
+	
+	private static List<Disease> getSynonim(List<String> listDiseaseName){
 		List<Disease> listDisease = new ArrayList<Disease>();
 
 		// A threader pour couch DB
@@ -23,8 +40,17 @@ public class AccueilService {
 		listDisease.addAll(getStringDisease(listDiseaseName));
 		
 		// a Threader pour Csv 
+		listDisease.addAll(getCSVDisease(listDiseaseName));
 		
-		
+		for(int i = 0; i < listDisease.size(); i++){
+			for(int j = 0; j < listDisease.size(); j++){
+				if((i != j) && ((listDisease.get(i).getName() == listDisease.get(j).getName() 
+						|| listDisease.get(i).getCui() == listDisease.get(j).getCui()
+						|| listDisease.get(i).getOmim() == listDisease.get(j).getOmim()))){
+					listDisease.remove(j);
+				}
+			}
+		}
 		return listDisease;
 	}
 	
@@ -79,6 +105,9 @@ public class AccueilService {
 		return listDisease;
 	}
 
-	
+	private static List<Disease> getCSVDisease(List<String> listDiseaseName){
+		// todo
+		return null;
+	}
 	
 }
