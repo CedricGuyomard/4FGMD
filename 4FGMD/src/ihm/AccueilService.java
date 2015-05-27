@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.concurrent.Task;
+
+import javax.swing.plaf.ListUI;
 import javax.xml.parsers.ParserConfigurationException;
 
 import model.Disease;
@@ -32,28 +35,61 @@ public class AccueilService {
 	
 	private static List<Disease> getDrug(List<Disease> listDisease){
 		
-		try {
-			ParserDrugBank pdb = new ParserDrugBank();
-			
-			for(Disease d : listDisease){
-				d = pdb.getDisease(d);
+		
+		Task<List<Disease>> taskXml = new Task<List<Disease>>() {
+			@Override
+			protected List<Disease> call() throws Exception {
+				ParserDrugBank pdb = new ParserDrugBank();
+				List<Disease> listpdb = listDisease;
+				for(Disease d : listpdb){
+					d = pdb.getDisease(d);
+				}
+				return listpdb;
 			}
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		};
+		new Thread(taskXml).start();
+	
+		taskXml.setOnSucceeded(e->{
+			try {
+				listDisease.addAll(taskXml.get());
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			System.out.println("research xml finish");
+		});
+		taskXml.setOnFailed(e->{
+			taskXml.getException().printStackTrace();
+		});
+		
+		Task<List<Disease>> taskSQL = new Task<List<Disease>>() {
+			@Override
+			protected List<Disease> call() throws Exception {
+				List<Disease> listSQl = listDisease;
+				SqlParser sqlP = new SqlParser();
+				for(Disease d : listSQl){
+					d = sqlP.getAllDrug(d);
+				}
+				return listSQl;
+			}
+		};
+		new Thread(taskSQL).start();
+	
+		taskSQL.setOnSucceeded(e->{
+			try {
+				listDisease.addAll(taskSQL.get());
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			System.out.println("research SQL finish");
+		});
+		taskSQL.setOnFailed(e->{
+			taskSQL.getException().printStackTrace();
+		});
 		
 		
-		SqlParser sqlP = new SqlParser();
-		for(Disease d : listDisease){
-			d = sqlP.getAllDrug(d);
-		}
+		while(!taskSQL.isDone() || !taskXml.isDone());
 		
 		return listDisease;
 	}

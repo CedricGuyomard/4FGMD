@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 import model.Disease;
 import model.Drug;
@@ -65,6 +66,8 @@ public class SqlParser {
 	{
 		String request;
 		ArrayList<Drug> listDrug = new ArrayList<Drug>();
+		List<String> listsynonim = maladie.getSynonym();
+		listsynonim.add(maladie.getName());
 		ResultSet rs;
 		
 		ArrayList<String> listNameDrug = new ArrayList<String>();
@@ -72,28 +75,30 @@ public class SqlParser {
 			listNameDrug.add(d.getName());
 		}
 		
-		
-		request = "SELECT Distinct(drug_name2)"
-				+ "FROM label_mapping lm, indications_raw lr "
-				+ "WHERE lm.label = lr.label AND lr.i_name LIKE upper(\"%"+ maladie.getName()+"%\");";
-		try
+		for(String s : listsynonim)
 		{
-			rs = this.SqlRequest(request);
-			if(rs != null)
+			request = "SELECT Distinct(drug_name2)"
+					+ "FROM label_mapping lm, indications_raw lr "
+					+ "WHERE lm.label = lr.label AND lr.i_name LIKE upper(\"%"+ s +"%\");";
+			try
 			{
-				while(rs.next())
+				rs = this.SqlRequest(request);
+				if(rs != null)
 				{
-					if(!listNameDrug.contains(rs.getString(1))){
-						listDrug.add(new Drug(rs.getString(1)));
-						listNameDrug.add(rs.getString(1));
+					while(rs.next())
+					{
+						if(!listNameDrug.contains(rs.getString(1))){
+							listDrug.add(new Drug(rs.getString(1)));
+							listNameDrug.add(rs.getString(1));
+						}
 					}
 				}
+			}catch(SQLException e)
+			{
+				e.printStackTrace();
 			}
-		}catch(SQLException e)
-		{
-			e.printStackTrace();
 		}
-		maladie.setListDrugIndication(listDrug);
+		maladie.getListDrugIndication().addAll(listDrug);
 			return maladie;
 		
 	}
@@ -104,32 +109,38 @@ public class SqlParser {
 		ArrayList<Drug> listDrug = new ArrayList<Drug>();
 		ResultSet rs;
 		
+		List<String> listsynonim = maladie.getSynonym();
+		listsynonim.add(maladie.getName());
+		
 		ArrayList<String> listNameDrug = new ArrayList<String>();
 		for(Drug d : maladie.getListDrugAdverseEffect()){
 			listNameDrug.add(d.getName());
 		}
 		
-		request = "SELECT Distinct(drug_name2)"
-				+ "FROM label_mapping lm, adverse_effects_raw lr "
-				+ "WHERE lm.label = lr.label AND lr.se_name LIKE upper(\"%"+ maladie.getName()+"%\");";
-		try
+		for(String s : listsynonim)
 		{
-			rs = this.SqlRequest(request);
-			if(rs != null)
+			request = "SELECT Distinct(drug_name2)"
+					+ "FROM label_mapping lm, adverse_effects_raw lr "
+					+ "WHERE lm.label = lr.label AND lr.se_name LIKE upper(\"%"+ maladie.getName()+"%\");";
+			try
 			{
-				while(rs.next())
+				rs = this.SqlRequest(request);
+				if(rs != null)
 				{
-					if(!listNameDrug.contains(rs.getString(1))){
-						listDrug.add(new Drug(rs.getString(1)));
-						listNameDrug.add(rs.getString(1));
+					while(rs.next())
+					{
+						if(!listNameDrug.contains(rs.getString(1))){
+							listDrug.add(new Drug(rs.getString(1)));
+							listNameDrug.add(rs.getString(1));
+						}
 					}
 				}
+			}catch(SQLException e)
+			{
+				e.printStackTrace();
 			}
-		}catch(SQLException e)
-		{
-			e.printStackTrace();
 		}
-		maladie.setListDrugAdverseEffect(listDrug);
+		maladie.getListDrugAdverseEffect().addAll(listDrug);
 			return maladie;
 	}
 	
