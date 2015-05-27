@@ -229,7 +229,7 @@ public class IndexText {
 				return line;
 			}
 			if(!StringUtils.isBlank(line)){
-				fct.execute(line.trim());
+				fct.execute(line);
 			}else{
 				fct.execute("\n");
 			}

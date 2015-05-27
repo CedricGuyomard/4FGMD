@@ -54,9 +54,14 @@ public class TextService {
 
 	public static Disease textItemToDisease(TextItem ti) {
 		Disease dis = new Disease();
+		dis=parseNO(ti, dis);
 		dis=parseTI(ti, dis);
 		dis=parseTX(ti, dis);
 		dis=parseCS(ti, dis);
+		return dis;
+	}
+	private static Disease parseNO(TextItem ti,Disease dis){
+		dis.setOmim(ti.getNO().trim());
 		return dis;
 	}
 	private static Disease parseTI(TextItem ti,Disease dis){
@@ -92,8 +97,11 @@ public class TextService {
 	}
 	private static Disease parseCS(TextItem ti,Disease dis){
 		for(String str :ti.getCS().split("--")){
-			Disease sign = new Disease();
-			
+			if(!(StringUtils.endsWith(str.trim(), ":") || StringUtils.contains(str.trim(), "[") || StringUtils.contains(str.trim(), "]"))){
+				Disease sign = new Disease();
+				sign.setName(str.trim());
+				dis.getListSymptom().add(sign);
+			}
 		}
 		return dis;
 	}
