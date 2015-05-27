@@ -60,23 +60,25 @@ public class Couchdb {
 		String s;
 		
 		String[] cmd = {
-				"./couch.py",
+				"cmd.exe /c python couch.py -c> NUL 2>&1",
 				"-c",
 				cs
 		};
 		
-		Process python = Runtime.getRuntime().exec(cmd);
+		Process python = Runtime.getRuntime().exec("cmd.exe /c python couch.py -c " + cs +" > NUL 2>&1");
 		BufferedReader scriptOutput = new BufferedReader(new InputStreamReader(python.getInputStream()));
 		s = scriptOutput.readLine();
-		
-		if (!s.equals("empty"))
+		if(s != null)
 		{
-			for(String str : s.split("\\$"))
+			if (!s.equals("empty"))
 			{
-				Disease tmp = new Disease();
-				tmp.setName(str);
-				ar_d.add(tmp);
-			}
+				for(String str : s.split("\\$"))
+				{
+					Disease tmp = new Disease();
+					tmp.setName(str);
+					ar_d.add(tmp);
+				}
+	}
 		}
 		return ar_d;
 	}

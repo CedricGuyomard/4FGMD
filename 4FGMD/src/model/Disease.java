@@ -40,6 +40,7 @@ public class Disease extends SuperClass {
 		listSymptom = new ArrayList<Disease>();
 		listDrugIndication = new ArrayList<Drug>();
 		listDrugAdverseEffect = new ArrayList<Drug>();
+		synonym = new ArrayList<String>();
 	}
 	public String getName() {
 		return name;

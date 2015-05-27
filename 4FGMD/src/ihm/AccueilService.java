@@ -69,13 +69,14 @@ public class AccueilService {
 		
 		// a Threader pour Csv 
 		//listDisease.addAll(getCSVDisease(listDiseaseName));
-		
-		for(int i = 0; i < listDisease.size(); i++){
-			for(int j = 0; j < listDisease.size(); j++){
-				if((i != j) && ((listDisease.get(i).getName() == listDisease.get(j).getName() 
-						|| listDisease.get(i).getCui() == listDisease.get(j).getCui()
-						|| listDisease.get(i).getOmim() == listDisease.get(j).getOmim()))){
-					listDisease.remove(j);
+		if(listDisease.size() > 0 ){
+			for(int i = 0; i < listDisease.size(); i++){
+				for(int j = 0; j < listDisease.size(); j++){
+					if((i != j) && (((listDisease.get(i).getName() != "" && listDisease.get(i).getName() == listDisease.get(j).getName())
+							|| (listDisease.get(i).getCui() != ""  && listDisease.get(i).getCui() == listDisease.get(j).getCui())
+							|| (listDisease.get(i).getOmim() != ""  && listDisease.get(i).getOmim() == listDisease.get(j).getOmim())))){
+						listDisease.remove(j);
+					}
 				}
 			}
 		}
