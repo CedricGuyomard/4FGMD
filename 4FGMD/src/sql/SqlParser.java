@@ -69,7 +69,7 @@ public class SqlParser {
 		
 		request = "SELECT Distinct(drug_name2)"
 				+ "FROM label_mapping lm, indications_raw lr "
-				+ "WHERE lm.label = lr.label AND lr.i_name = \""+ maladie.getName()+"\";";
+				+ "WHERE lm.label = lr.label AND lr.i_name LIKE %upper(\""+ maladie.getName()+"\")%;";
 		try
 		{
 			rs = this.SqlRequest(request);
@@ -97,7 +97,7 @@ public class SqlParser {
 		
 		request = "SELECT Distinct(drug_name2)"
 				+ "FROM label_mapping lm, adverse_effects_raw lr "
-				+ "WHERE lm.label = lr.label AND AND lr.se_name = \""+ maladie.getName()+"\";";
+				+ "WHERE lm.label = lr.label AND AND lr.se_name LIKE %upper(\""+ maladie.getName()+"\")%;";
 		try
 		{
 			rs = this.SqlRequest(request);
@@ -124,7 +124,7 @@ public class SqlParser {
 		
 		request = "SELECT Distinct(i_name)"
 				+ "FROM label_mapping lm, indications_raw lr "
-				+ "WHERE lm.label = lr.label AND AND lm.drug_name2 LIKE %\""+ drug.getName() +"\"%;";
+				+ "WHERE lm.label = lr.label AND AND lm.drug_name2 LIKE %upper(\""+ drug.getName() +"\")%;";
 		try
 		{
 			rs = this.SqlRequest(request);
@@ -153,7 +153,7 @@ public class SqlParser {
 		
 		request = "SELECT Distinct(se_name)"
 				+ "FROM label_mapping lm, adverse_effects_raw lr "
-				+ "WHERE lm.label = lr.label AND AND lm.drug_name2 LIKE %\""+ drug.getName() +"\"%;";
+				+ "WHERE lm.label = lr.label AND AND upper(lm.drug_name2) LIKE %upper(\""+ drug.getName() +"\")%;";
 		try
 		{
 			rs = this.SqlRequest(request);
