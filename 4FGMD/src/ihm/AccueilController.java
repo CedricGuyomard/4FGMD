@@ -299,9 +299,7 @@ public class AccueilController extends Controller{
 		endResearch.bind(endCouchDB.and(endMySql).and(endText).and(endXml).and(endCSV));
 	}
 	private void research(){
-
-		//results.setAll(taskMerge.get());
-		//cbDisResult.valueProperty().set(null);
+			AccueilService.Request(lvSign.getItems());
 	}
 	/*private void research(){
 		endCouchDB.set(false);
