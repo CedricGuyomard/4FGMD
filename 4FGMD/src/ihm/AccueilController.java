@@ -7,6 +7,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
@@ -472,32 +473,29 @@ public class AccueilController extends Controller{
 	
 	//search action
 	private void research(){
-		results.clear();
-		results2.clear();
-		Alert progressAlert = App.progressAlert("Searching....");
-		progressAlert.show();
-		if(rbSign.isSelected()){
-		//trickyMove short
-		results.setAll(AccueilService.requestDisease(signs).stream().sorted((e1,e2)->{
-			if(e1!=null && e2 !=null){
-				int le1 = e1.getListDrugAdverseEffect().size()+e1.getSynonym().size()+e1.getListSymptom().size()+e1.getListDrugIndication().size();
-				int le2 = e2.getListDrugAdverseEffect().size()+e2.getSynonym().size()+e2.getListSymptom().size()+e2.getListDrugIndication().size();
-				return le2 - le1 ;
-			}
-			return 1;
-		}).collect(Collectors.toList()));
-		}else{
-			//trickyMove short
-			results2.setAll(AccueilService.requestDrug(drugs).stream().sorted((e1,e2)->{
-				if(e1!=null && e2 !=null){
-					int le1 = e1.getListIndicationDisease().size()+e1.getListAdverseEffectDisease().size();
-					int le2 = e2.getListIndicationDisease().size()+e2.getListAdverseEffectDisease().size();
-					return le2 - le1 ;
+			results.clear();
+			results2.clear();
+			if(rbSign.isSelected()){
+				//trickyMove short
+				results.setAll(AccueilService.requestDisease(signs).stream().sorted((e1,e2)->{
+					if(e1!=null && e2 !=null){
+						int le1 = e1.getListDrugAdverseEffect().size()+e1.getSynonym().size()+e1.getListSymptom().size()+e1.getListDrugIndication().size();
+						int le2 = e2.getListDrugAdverseEffect().size()+e2.getSynonym().size()+e2.getListSymptom().size()+e2.getListDrugIndication().size();
+						return le2 - le1 ;
+					}
+					return 1;
+				}).collect(Collectors.toList()));
+				}else{
+					//trickyMove short
+					results2.setAll(AccueilService.requestDrug(drugs).stream().sorted((e1,e2)->{
+						if(e1!=null && e2 !=null){
+							int le1 = e1.getListIndicationDisease().size()+e1.getListAdverseEffectDisease().size();
+							int le2 = e2.getListIndicationDisease().size()+e2.getListAdverseEffectDisease().size();
+							return le2 - le1 ;
+						}
+						return 1;
+					}).collect(Collectors.toList()));
 				}
-				return 1;
-			}).collect(Collectors.toList()));
-		}
-		progressAlert.close();
 	}
 	
 }
