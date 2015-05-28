@@ -1,21 +1,14 @@
 package ihm;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleListProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -33,9 +26,6 @@ import model.Disease;
 import model.Drug;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.lucene.queryparser.classic.ParseException;
-
-import text.TextService;
 
 @FxmlSource("fxml/Accueil.fxml")
 public class AccueilController extends Controller{
@@ -77,30 +67,30 @@ public class AccueilController extends Controller{
 	@FXML VBox boxDisDrugAdverseEffect;
 	@FXML ListView<Drug> lvDisDrugAdverseEffect;
 	
-	@FXML Button search;
+
 	
-	List<Disease> lCouchDB=new ArrayList<Disease>();
-	List<Disease> lCSV=new ArrayList<Disease>();
-	List<Disease> lMySql=new ArrayList<Disease>();
-	List<Disease> lText=new ArrayList<Disease>();
-	List<Disease> lXml=new ArrayList<Disease>();
+	@FXML VBox boxResultDiseases2;
+	@FXML ComboBox<Drug>  cbDisResult2;
+	@FXML TextArea taDisDescription2;
+	@FXML HBox boxDisResult2;
+	@FXML VBox boxDisDrugIndication2;
+	@FXML ListView<Disease> lvDisDrugIndication2;
+	@FXML VBox boxDisDrugAdverseEffect2;
+	@FXML ListView<Disease> lvDisDrugAdverseEffect2;
+	
+	@FXML Button search;
 	
 	ListProperty<String> signs=new SimpleListProperty<String>(FXCollections.observableArrayList());
 	ListProperty<String> drugs=new SimpleListProperty<String>(FXCollections.observableArrayList());
 	ListProperty<Disease> results=new SimpleListProperty<Disease>(FXCollections.observableArrayList());
+	ListProperty<Drug> results2=new SimpleListProperty<Drug>(FXCollections.observableArrayList());
 	
 	ListProperty<String> synonyms=new SimpleListProperty<String>(FXCollections.observableArrayList());
 	ListProperty<Disease> symptoms=new SimpleListProperty<Disease>(FXCollections.observableArrayList());
 	ListProperty<Drug> drugIndications=new SimpleListProperty<Drug>(FXCollections.observableArrayList());
 	ListProperty<Drug> drugAdverseEffects=new SimpleListProperty<Drug>(FXCollections.observableArrayList());
-	
-	ChangeListener<? super Boolean> endResearchListener;
-	BooleanProperty endResearch = new SimpleBooleanProperty(false);
-	BooleanProperty endCouchDB = new SimpleBooleanProperty(false);
-	BooleanProperty endCSV = new SimpleBooleanProperty(false);
-	BooleanProperty endMySql = new SimpleBooleanProperty(false);
-	BooleanProperty endText = new SimpleBooleanProperty(false);
-	BooleanProperty endXml = new SimpleBooleanProperty(false);
+	ListProperty<Disease> indications=new SimpleListProperty<Disease>(FXCollections.observableArrayList());
+	ListProperty<Disease> adverseEffects=new SimpleListProperty<Disease>(FXCollections.observableArrayList());
 	
 	@Override
 	protected void setStartCondition() {
@@ -189,6 +179,32 @@ public class AccueilController extends Controller{
 		boxDisDrugAdverseEffect.maxWidthProperty().bind(boxDisDrugAdverseEffect.prefWidthProperty());
 		boxDisDrugAdverseEffect.minWidthProperty().bind(boxDisDrugAdverseEffect.prefWidthProperty());
 		
+
+		
+		boxDisDrugIndication2.prefWidthProperty().bind(boxDisResult2.widthProperty().divide(2).subtract(30/2));
+		boxDisDrugIndication2.maxWidthProperty().bind(boxDisDrugIndication2.prefWidthProperty());
+		boxDisDrugIndication2.minWidthProperty().bind(boxDisDrugIndication2.prefWidthProperty());
+		boxDisDrugAdverseEffect2.prefWidthProperty().bind(boxDisResult2.widthProperty().divide(2).subtract(30/2));
+		boxDisDrugAdverseEffect2.maxWidthProperty().bind(boxDisDrugAdverseEffect2.prefWidthProperty());
+		boxDisDrugAdverseEffect2.minWidthProperty().bind(boxDisDrugAdverseEffect2.prefWidthProperty());
+
+
+		boxResultDiseases2.prefWidthProperty().bind(boxResult.widthProperty());
+		boxResultDiseases2.minWidthProperty().bind(boxResultDiseases2.prefWidthProperty());
+		boxResultDiseases2.maxWidthProperty().bind(boxResultDiseases2.prefWidthProperty());
+		boxResultDiseases2.prefHeightProperty().bind(boxResult.heightProperty().subtract(20));
+		boxResultDiseases2.minHeightProperty().bind(boxResultDiseases2.prefHeightProperty());
+		boxResultDiseases2.maxHeightProperty().bind(boxResultDiseases2.prefHeightProperty());
+		
+		boxResultDiseases2.disableProperty().bind(results2.emptyProperty());
+		
+		boxDisResult2.prefWidthProperty().bind(boxResultDiseases2.widthProperty().subtract(15));
+		boxDisResult2.minWidthProperty().bind(boxDisResult2.prefWidthProperty());
+		boxDisResult2.maxWidthProperty().bind(boxDisResult2.prefWidthProperty());
+		boxDisResult2.prefHeightProperty().bind(boxResultDiseases2.prefHeightProperty().subtract(15));
+		boxDisResult2.minHeightProperty().bind(boxDisResult2.prefHeightProperty());
+		boxDisResult2.maxHeightProperty().bind(boxDisResult2.prefHeightProperty());
+		
 		/*boxDisSynonym.prefHeightProperty().bind(boxDisResult.heightProperty().subtract(30));
 		boxDisSynonym.maxHeightProperty().bind(boxDisSynonym.prefHeightProperty());
 		boxDisSynonym.minHeightProperty().bind(boxDisSynonym.prefHeightProperty());
@@ -202,6 +218,10 @@ public class AccueilController extends Controller{
 		boxDisDrugAdverseEffect.maxHeightProperty().bind(boxDisDrugAdverseEffect.prefHeightProperty());
 		boxDisDrugAdverseEffect.minHeightProperty().bind(boxDisDrugAdverseEffect.prefHeightProperty());*/
 		
+		boxResultDiseases.visibleProperty().bind(rbSign.selectedProperty());
+		boxResultDiseases.managedProperty().bind(rbSign.selectedProperty());
+		boxResultDiseases2.visibleProperty().bind(rbDrug.selectedProperty());
+		boxResultDiseases2.managedProperty().bind(rbDrug.selectedProperty());
 		
 		search.setOnAction(e->{
 			research();
@@ -211,6 +231,7 @@ public class AccueilController extends Controller{
 		lvSign.itemsProperty().bind(signs);
 		lvDrug.itemsProperty().bind(drugs);
 		cbDisResult.itemsProperty().bind(results);
+		cbDisResult2.itemsProperty().bind(results2);
 		
 		lvSign.setCellFactory(lv -> {
             return new ListCell<String>() {
@@ -296,6 +317,9 @@ public class AccueilController extends Controller{
 		lvDisSymptom.itemsProperty().bind(symptoms);
 		lvDisDrugIndication.itemsProperty().bind(drugIndications);
 		lvDisDrugAdverseEffect.itemsProperty().bind(drugAdverseEffects);
+
+		lvDisDrugIndication2.itemsProperty().bind(indications);
+		lvDisDrugAdverseEffect2.itemsProperty().bind(adverseEffects);
 		
 		cbDisResult.valueProperty().addListener((obs,o,n)->{
 			taDisDescription.setText("");
@@ -334,7 +358,6 @@ public class AccueilController extends Controller{
 				return null;
 			}
 		});
-		endResearch.bind(endCouchDB.and(endMySql).and(endText).and(endXml).and(endCSV));
 		//TODO faire une popover pour description medicament/origine symptome ...
 		
 		lvDisSymptom.setCellFactory(lv -> {
@@ -377,10 +400,75 @@ public class AccueilController extends Controller{
                 }
          };});
 		
+		cbDisResult2.valueProperty().addListener((obs,o,n)->{
+			taDisDescription2.setText("");
+			indications.clear();
+			adverseEffects.clear();
+			if(n!=null){
+				taDisDescription2.setText(n.getDescription());
+				adverseEffects.setAll(n.getListAdverseEffectDisease());
+				indications.setAll(n.getListIndicationDisease());
+			}
+		});
+		cbDisResult2.setCellFactory(lv -> {
+            return new ListCell<Drug>() {
+                @Override
+                protected void updateItem(Drug item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item == null || empty || StringUtils.isBlank(item.getName())) {
+                        setText(null);
+                        setGraphic(null);
+                    } else {
+                    	setGraphic(new Label(item.getName()));
+                    }
+                }
+         };});
+		cbDisResult2.setConverter(new StringConverter<Drug>() {
+			@Override
+			public String toString(Drug object) {
+				return object.getName();
+			}
+			@Override
+			public Drug fromString(String string) {
+				return null;
+			}
+		});
+		
+		
+		lvDisDrugIndication2.setCellFactory(lv -> {
+            return new ListCell<Disease>() {
+                @Override
+                protected void updateItem(Disease item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item == null || empty || StringUtils.isBlank(item.getName())) {
+                        setText(null);
+                        setGraphic(null);
+                    } else {
+                    	setGraphic(new Label(item.getName()));
+                    }
+                }
+         };});
+		lvDisDrugAdverseEffect2.setCellFactory(lv -> {
+            return new ListCell<Disease>() {
+                @Override
+                protected void updateItem(Disease item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item == null || empty || StringUtils.isBlank(item.getName())) {
+                        setText(null);
+                        setGraphic(null);
+                    } else {
+                    	setGraphic(new Label(item.getName()));
+                    }
+                }
+         };});
+		
 	}
 	private void research(){
+		results.clear();
+		results2.clear();
+		if(rbSign.isSelected()){
 		//trickyMove short
-		results.setAll(AccueilService.Request(signs).stream().sorted((e1,e2)->{
+		results.setAll(AccueilService.requestDisease(signs).stream().sorted((e1,e2)->{
 			if(e1!=null && e2 !=null){
 				int le1 = e1.getListDrugAdverseEffect().size()+e1.getSynonym().size()+e1.getListSymptom().size()+e1.getListDrugIndication().size();
 				int le2 = e2.getListDrugAdverseEffect().size()+e2.getSynonym().size()+e2.getListSymptom().size()+e2.getListDrugIndication().size();
@@ -388,30 +476,17 @@ public class AccueilController extends Controller{
 			}
 			return 1;
 		}).collect(Collectors.toList()));
-	}
-	private List<Disease> mergeData(List<Disease> listCouchDB, List<Disease> lCSV ,List<Disease> listMySql, List<Disease> listText, List<Disease> listXml){
-		System.out.println("Start merge data");
-		return listText;
-	}
-	private List<Disease> researchCouchDB(){
-		System.out.println("Start research CouchDB");
-		return new ArrayList<Disease>();
-	}
-	private List<Disease> researchCSV(){
-		System.out.println("Start research CSV");
-		return new ArrayList<Disease>();
-	}
-	private List<Disease> researchMySql(){
-		System.out.println("Start research MySql");
-		return new ArrayList<Disease>();
-	}
-	private List<Disease> researchText(String s) throws IOException, ParseException{
-		System.out.println("Start research Text");
-		return TextService.getDiseases(s);
-	}
-	private List<Disease> researchXml(){
-		System.out.println("Start research Xml");
-		return new ArrayList<Disease>();
+		}else{
+			//trickyMove short
+			results2.setAll(AccueilService.requestDrug(drugs).stream().sorted((e1,e2)->{
+				if(e1!=null && e2 !=null){
+					int le1 = e1.getListIndicationDisease().size()+e1.getListAdverseEffectDisease().size();
+					int le2 = e2.getListIndicationDisease().size()+e2.getListAdverseEffectDisease().size();
+					return le2 - le1 ;
+				}
+				return 1;
+			}).collect(Collectors.toList()));
+		}
 	}
 	
 }

@@ -88,13 +88,31 @@
           <VBox fx:id="boxResult" >
                <children>
                   <Pane>
+                  	<VBox fx:id="boxResultDiseases2">
+	                  	<HBox >
+	                  		<Label text="Drugs" prefWidth="70"></Label>
+	                  		<ComboBox   fx:id="cbDisResult2" prefWidth="300"></ComboBox>
+	                  	</HBox>
+	                  	<Label text="Description"></Label>
+	                  	<TextArea fx:id="taDisDescription2" editable="false" prefHeight="100" minHeight="100"></TextArea>
+	                  	<HBox fx:id="boxDisResult2" alignment="CENTER">
+	                  		<VBox fx:id="boxDisDrugIndication2">
+	                  			<Label text="Indication for" ></Label>
+	                  			<ListView fx:id="lvDisDrugIndication2"></ListView>
+	                  		</VBox>
+	                  		<VBox fx:id="boxDisDrugAdverseEffect2">
+	                  			<Label text="Adverses effects" ></Label>
+	                  			<ListView fx:id="lvDisDrugAdverseEffect2"></ListView>
+	                  		</VBox>
+	                  	</HBox>
+                  	</VBox>
                   	<VBox fx:id="boxResultDiseases">
 	                  	<HBox >
 	                  		<Label text="Diseases" prefWidth="70"></Label>
 	                  		<ComboBox   fx:id="cbDisResult" prefWidth="300"></ComboBox>
 	                  	</HBox>
 	                  	<Label text="Description"></Label>
-	                  	<TextArea fx:id="taDisDescription" editable="false" prefHeight="150" minHeight="150"></TextArea>
+	                  	<TextArea fx:id="taDisDescription" editable="false" prefHeight="100" minHeight="100"></TextArea>
 	                  	<HBox fx:id="boxDisResult" alignment="CENTER">
 	                  		<VBox fx:id="boxDisSynonym">
 	                  			<Label text="Synonyms" ></Label>
@@ -113,10 +131,12 @@
 	                  			<ListView fx:id="lvDisDrugAdverseEffect"></ListView>
 	                  		</VBox>
 	                  	</HBox>
-                  	</VBox>          	
+                  	</VBox>   	
                   </Pane>
                </children>
             </VBox>
+            
+        
         </items>
       </SplitPane>
    </children>
