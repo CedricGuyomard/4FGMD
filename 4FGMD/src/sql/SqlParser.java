@@ -152,7 +152,7 @@ public class SqlParser {
 		
 		request = "SELECT Distinct(i_name)"
 				+ "FROM label_mapping lm, indications_raw lr "
-				+ "WHERE lm.label = lr.label AND AND lm.drug_name2 LIKE upper(\"%"+ drug.getName()+"%\");";
+				+ "WHERE lm.label = lr.label AND lm.drug_name2 LIKE upper(\"%"+ drug.getName()+"%\");";
 		try
 		{
 			rs = this.SqlRequest(request);
@@ -161,7 +161,6 @@ public class SqlParser {
 				while(rs.next())
 				{
 					ds.setName(rs.getString(1));
-					ds = this.getAllDrug(ds);
 					listDisease.add(ds);
 				}
 			}
@@ -170,6 +169,10 @@ public class SqlParser {
 			e.printStackTrace();
 		}
 		
+		for(Disease d : listDisease)
+		{
+			d = this.getAllDrug(ds);
+		}
 		return listDisease;
 	}
 	
@@ -181,7 +184,7 @@ public class SqlParser {
 		
 		request = "SELECT Distinct(se_name)"
 				+ "FROM label_mapping lm, adverse_effects_raw lr "
-				+ "WHERE lm.label = lr.label AND AND upper(lm.drug_name2) LIKE upper(\"%"+ drug.getName()+"%\");";
+				+ "WHERE lm.label = lr.label AND upper(lm.drug_name2) LIKE upper(\"%"+ drug.getName()+"%\");";
 		try
 		{
 			rs = this.SqlRequest(request);
@@ -190,7 +193,6 @@ public class SqlParser {
 				while(rs.next())
 				{
 					ds.setName(rs.getString(1));
-					ds = this.getAllDrug(ds);
 					listDisease.add(ds);
 				}
 			}
@@ -198,19 +200,11 @@ public class SqlParser {
 		{
 			e.printStackTrace();
 		}
-		
-		return listDisease;
-	}
-	
-	public void CloseDB()
-	{
-		try {
-			this.cn.close();
-			this.st.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		for(Disease d : listDisease)
+		{
+			d = this.getAllDrug(ds);
 		}
+		return listDisease;
 	}
 
 }

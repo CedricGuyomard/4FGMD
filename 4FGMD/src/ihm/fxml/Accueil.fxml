@@ -47,7 +47,7 @@
                                <HBox alignment="CENTER" >
                                   <children>
                                      <TextField fx:id="tfSign" prefWidth="2000" />
-                                     <Button fx:id="bSignAnd" mnemonicParsing="false" text="And" minWidth="40"/>
+                                     <Button fx:id="bSignAnd" mnemonicParsing="false" text="Add" minWidth="40"/>
                                      <Button fx:id="bSignOr" mnemonicParsing="false" text="Or" minWidth="40"/>
                                   </children>
                                </HBox>
@@ -63,7 +63,7 @@
                                <HBox alignment="CENTER" >
                                   <children>
                                      <TextField fx:id="tfDrug" prefWidth="2000" />
-                                     <Button fx:id="bDrugAnd" mnemonicParsing="false" text="And" minWidth="40"/>
+                                     <Button fx:id="bDrugAnd" mnemonicParsing="false" text="Add" minWidth="40"/>
                                      <Button fx:id="bDrugOr" mnemonicParsing="false" text="Or" minWidth="40"/>
                                   </children>
                                </HBox>

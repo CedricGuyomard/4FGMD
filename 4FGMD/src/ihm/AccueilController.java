@@ -292,12 +292,12 @@ public class AccueilController extends Controller{
 			}
 		});
 		bDrugAnd.setOnAction(e->{
-			if(tfSign.textProperty().isNotEmpty().get() ){
-				String text = StringUtils.capitalize(tfSign.getText().trim());
-				if(!signs.contains(text)){
-					signs.add(text);
+			if(tfDrug.textProperty().isNotEmpty().get() ){
+				String text = StringUtils.capitalize(tfDrug.getText().trim());
+				if(!drugs.contains(text)){
+					drugs.add(text);
 				}
-				tfSign.setText("");
+				tfDrug.setText("");
 			}
 		});
 		//TODO

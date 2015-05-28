@@ -19,6 +19,8 @@ public class Drug extends SuperClass{
 	{
 		this.name = name;
 		this.synonym = new ArrayList<String>();
+		this.listAdverseEffectDisease = new ArrayList<Disease>();
+		this.listIndicationDisease = new ArrayList<Disease>();
 	}
 	
 	public String getName() {

@@ -36,11 +36,10 @@ public class AccueilService {
 	}
 	
 	private static List<Drug> listDrugSQL(List<Drug> listDrug){
-		
 		SqlParser sqp = new SqlParser();
 		for(Drug d : listDrug){
-			d.setListAdverseEffectDisease(sqp.getDiseaseAdvEffect(d));
 			d.setListIndicationDisease(sqp.getDiseaseIndication(d));
+			d.setListAdverseEffectDisease(sqp.getDiseaseAdvEffect(d));
 		}
 		return listDrug;
 	}
@@ -144,7 +143,7 @@ public class AccueilService {
 		List<Disease> listDisease = new ArrayList<Disease>();
 
 		// A threader pour couch DB
-		listDisease.addAll(getCouchDBDisease(listDiseaseName));	
+		//listDisease.addAll(getCouchDBDisease(listDiseaseName));	
 		
 		// a Threader pour Txt
 		listDisease.addAll(getStringDisease(listDiseaseName));
