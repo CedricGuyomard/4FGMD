@@ -2,7 +2,9 @@ package ihm;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -204,7 +206,7 @@ public class AccueilController extends Controller{
 		search.setOnAction(e->{
 			research();
 		});
-		
+		search.disableProperty().bind(Bindings.or(rbDrug.selectedProperty().and(drugs.emptyProperty()), rbSign.selectedProperty().and(signs.emptyProperty())));
 		
 		lvSign.itemsProperty().bind(signs);
 		lvDrug.itemsProperty().bind(drugs);
@@ -374,9 +376,18 @@ public class AccueilController extends Controller{
                     }
                 }
          };});
+		
 	}
 	private void research(){
-		results.setAll(AccueilService.Request(signs));
+		//trickyMove short
+		results.setAll(AccueilService.Request(signs).stream().sorted((e1,e2)->{
+			if(e1!=null && e2 !=null){
+				int le1 = e1.getListDrugAdverseEffect().size()+e1.getSynonym().size()+e1.getListSymptom().size()+e1.getListDrugIndication().size();
+				int le2 = e2.getListDrugAdverseEffect().size()+e2.getSynonym().size()+e2.getListSymptom().size()+e2.getListDrugIndication().size();
+				return le2 - le1 ;
+			}
+			return 1;
+		}).collect(Collectors.toList()));
 	}
 	private List<Disease> mergeData(List<Disease> listCouchDB, List<Disease> lCSV ,List<Disease> listMySql, List<Disease> listText, List<Disease> listXml){
 		System.out.println("Start merge data");

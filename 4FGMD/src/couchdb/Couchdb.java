@@ -18,11 +18,10 @@ public class Couchdb {
 		}
 		
 		String[] cmd = {
-				"./couch.py",
+				"cmd.exe /c python couch.py",
 				"-d",
 				d.getName()
 		};
-		
 		Process python = Runtime.getRuntime().exec(cmd);
 		BufferedReader scriptOutput = new BufferedReader(new InputStreamReader(python.getInputStream()));
 		s = scriptOutput.readLine();
@@ -60,12 +59,12 @@ public class Couchdb {
 		String s;
 		
 		String[] cmd = {
-				"cmd.exe /c python couch.py -c> NUL 2>&1",
+				"cmd.exe /c python couch.py",
 				"-c",
 				cs
 		};
 		
-		Process python = Runtime.getRuntime().exec("cmd.exe /c python couch.py -c " + cs +" > NUL 2>&1");
+		Process python = Runtime.getRuntime().exec(cmd);
 		BufferedReader scriptOutput = new BufferedReader(new InputStreamReader(python.getInputStream()));
 		s = scriptOutput.readLine();
 		if(s != null)
