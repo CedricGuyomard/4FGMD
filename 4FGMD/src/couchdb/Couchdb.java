@@ -18,11 +18,11 @@ public class Couchdb {
 		}
 		
 		String[] cmd = {
-				"cmd.exe /c python couch.py",
+				"cmd.exe /c python C:\\Users\\cubito\\git\\4FGMD\\4FGMD\\couch.py",
 				"-d",
 				d.getName()
 		};
-		Process python = Runtime.getRuntime().exec(cmd);
+		Process python = Runtime.getRuntime().exec("cmd.exe /c python C:\\Users\\cubito\\git\\4FGMD\\4FGMD\\couch.py -d " + d.getName() );
 		BufferedReader scriptOutput = new BufferedReader(new InputStreamReader(python.getInputStream()));
 		s = scriptOutput.readLine();
 		System.out.println(s);
@@ -59,12 +59,12 @@ public class Couchdb {
 		String s;
 		
 		String[] cmd = {
-				"cmd.exe /c python couch.py",
+				"cmd.exe /c python C:\\Users\\cubito\\git\\4FGMD\\4FGMD\\couch.py",
 				"-c",
 				cs
 		};
-		
-		Process python = Runtime.getRuntime().exec(cmd);
+		System.out.println(cmd);
+		Process python = Runtime.getRuntime().exec("cmd.exe /c python C:\\Users\\cubito\\git\\4FGMD\\4FGMD\\couch.py -c " + cs );
 		BufferedReader scriptOutput = new BufferedReader(new InputStreamReader(python.getInputStream()));
 		s = scriptOutput.readLine();
 		if(s != null)
