@@ -6,10 +6,10 @@ import java.util.List;
 
 import javafx.concurrent.Task;
 
-import javax.swing.plaf.ListUI;
 import javax.xml.parsers.ParserConfigurationException;
 
 import model.Disease;
+import model.Drug;
 
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.xml.sax.SAXException;
@@ -22,7 +22,53 @@ import couchdb.CouchdbException;
 
 public class AccueilService {
 	
-	public static List<Disease> Request(List<String> listDiseaseName){
+	/*
+	 * Gestion des médicaments.  
+	 */
+	public static List<Drug> requestDrug(List<String> listDrugName){
+		List<Drug> listDrug = new ArrayList<Drug>();
+		
+		listDrug = listDrugXML(listDrugName);
+		
+		listDrug = listDrugSQL(listDrug);
+		
+		return listDrug;
+	}
+	
+	private static List<Drug> listDrugSQL(List<Drug> listDrug){
+		
+		SqlParser sqp = new SqlParser();
+		for(Drug d : listDrug){
+			d.setListAdverseEffectDisease(sqp.getDiseaseAdvEffect(d));
+			d.setListIndicationDisease(sqp.getDiseaseIndication(d));
+		}
+		return listDrug;
+	}
+	
+	private static List<Drug> listDrugXML(List<String> listDrugName){
+		List<Drug> listDisease = new ArrayList<Drug>();
+		
+		try {
+			ParserDrugBank pdb = new ParserDrugBank();
+			
+			for(String s : listDrugName){
+				Drug dr = new Drug(s);
+				pdb.getDrug(dr);
+				listDisease.add(dr);
+			}
+		} catch (SAXException | IOException | ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return listDisease;
+	}
+	
+	/*
+	 * Gestion des maladies 
+	 */
+	public static List<Disease> requestDisease(List<String> listDiseaseName){
 		//TODO Parser la requete pour differencier ou et or
 		List<Disease> listDisease = new ArrayList<Disease>();
 		

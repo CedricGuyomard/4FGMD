@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Drug extends SuperClass{
 
@@ -9,6 +10,10 @@ public class Drug extends SuperClass{
 	private String description;
 	
 	private ArrayList<String> synonym;
+	
+	private List<Disease> listIndicationDisease;
+	
+	private List<Disease> listAdverseEffectDisease;
 	
 	public Drug(String name)
 	{
@@ -38,6 +43,22 @@ public class Drug extends SuperClass{
 
 	public void setSynonym(ArrayList<String> synonym) {
 		this.synonym = synonym;
+	}
+
+	public List<Disease> getListIndicationDisease() {
+		return listIndicationDisease;
+	}
+
+	public void setListIndicationDisease(List<Disease> listIndicationDisease) {
+		this.listIndicationDisease = listIndicationDisease;
+	}
+
+	public List<Disease> getListAdverseEffectDisease() {
+		return listAdverseEffectDisease;
+	}
+
+	public void setListAdverseEffectDisease(List<Disease> listAdverseEffectDisease) {
+		this.listAdverseEffectDisease = listAdverseEffectDisease;
 	}
 	
 }
