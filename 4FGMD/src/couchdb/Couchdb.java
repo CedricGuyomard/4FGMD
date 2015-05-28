@@ -27,6 +27,7 @@ public class Couchdb {
 		s = scriptOutput.readLine();
 		System.out.println(s);
 		
+		// Parse the line given by the python script
 		String[] tokens = s.split(";");
 		d.setSynonym(Arrays.asList(tokens[0].split("\\$")));
 		
@@ -71,6 +72,7 @@ public class Couchdb {
 		{
 			if (!s.equals("empty"))
 			{
+				// Parse the line given by the python script
 				for(String str : s.split("\\$"))
 				{
 					Disease tmp = new Disease();
