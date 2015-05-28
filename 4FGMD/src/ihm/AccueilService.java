@@ -116,6 +116,7 @@ public class AccueilService {
 				}
 			}
 		}
+		
 		return listDisease;
 	}
 	

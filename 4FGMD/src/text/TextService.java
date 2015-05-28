@@ -19,7 +19,7 @@ public class TextService {
 		if(StringUtils.isNotBlank(name)){
 		ListProperty<Document> list = IndexText.get(IndexText.column.TI.getValue(),name);
 		return list.stream().map(doc->{
-				TextItem ti = new TextItem();
+				TextItem ti = new TextItem(name);
 				ti.setNO(doc.get(IndexText.column.NO.getValue()));
 				ti.setTI(doc.get(IndexText.column.TI.getValue()));
 				ti.setTX(doc.get(IndexText.column.TX.getValue()));
@@ -67,6 +67,9 @@ public class TextService {
 	private static Disease parseTI(TextItem ti,Disease dis){
 		boolean nameNotSet = true;
 		String id ="";
+		if(StringUtils.isNotBlank(ti.getSearch())){
+			dis.getSynonym().add(ti.getSearch());
+		}
 		for(String syn :ti.getTI().split(";;")){
 			String[] syns = syn.split(";");
 			for(String term : syns){
