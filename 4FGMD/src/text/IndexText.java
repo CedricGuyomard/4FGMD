@@ -40,10 +40,13 @@ import org.apache.lucene.util.Version;
 /** Index all text files under a directory. */
 public class IndexText {
 
+	//Texte Data
 	private static final String FILE = "omim.txt";
 
-	static final File INDEX_DIR = new File("drug_bank");
+	//Indexed folder
 	static final File INDEX_DIR_OMIM = new File("omim");
+	
+	//key word to divide Product
 	static enum keyWord{
 		THEEND("THEEND"),RECORD("RECORD"),FIELD("FIELD");
 		String value;
@@ -54,6 +57,8 @@ public class IndexText {
 			return value;
 		}
 	}
+	
+	//Key word to find differente disease part
 	static enum column{
 		NO("NO"),TI("TI"),TX("TX"),CS("CS");
 		String value;
@@ -64,17 +69,15 @@ public class IndexText {
 			return value;
 		}
 	}
+	//generic methode
 	private interface lamdaString{
 		void execute(String line);
 	}
 	
-
+	
 	public static void index() {
 		boolean create = true;
-
-		if (INDEX_DIR.exists()) {
-			INDEX_DIR.delete();
-		}
+		
 		if (INDEX_DIR_OMIM.exists()) {
 			INDEX_DIR_OMIM.delete();
 		}
@@ -82,6 +85,7 @@ public class IndexText {
 		File file;
 		Date start;
 		file = new File(FILE);
+		//read text file
 		if (!file.exists() || !file.canRead()) {
 			System.out.println("File '" +file.getAbsolutePath()+ "' does not exist or is not readable, please check the path");
 			System.exit(1);
@@ -89,6 +93,7 @@ public class IndexText {
 
 		start = new Date();
 		try {
+			//create indexed folder
 			Directory directory = FSDirectory.open(INDEX_DIR_OMIM);
 			Analyzer analyzer = new StandardAnalyzer();
 			IndexWriterConfig config = new IndexWriterConfig(Version.LATEST, analyzer);
@@ -144,19 +149,19 @@ public class IndexText {
 					}
 					if(line.startsWith("*FIELD*")){
 						switch(StringUtils.capitalize(line.replace("*FIELD*", " ").trim())){
-						case "NO" :
+						case "NO" ://id part
 							line=getDetails(br, line, (s)->getNO(map,br, s));
 							break;
-						case "TI" :
+						case "TI" ://name and synonyms
 							line=getDetails(br, line, (s)->getTI(map,br, s));
 							break;
-						case "TX" :
+						case "TX" ://description
 							line=getDetails(br, line, (s)->getTX(map,br, s));
 							break;
-						case "CS" :
+						case "CS" ://Signs
 							line=getDetails(br, line, (s)->getCS(map,br, s));
 							break;
-						default : 
+						default : //other
 							System.out.println("Part Ignored "+line.trim());
 							line=getDetails(br, line, (s)->{});
 						}
@@ -188,8 +193,7 @@ public class IndexText {
 		//write the index
 		// make a new, empty document
 		Document doc = new Document();
-		//add 3 fields to it
-		//doc.add(new StoredField("id",map.get("NO"))); // stored not indexed
+		//add 4 field to doc
 		doc.add(new TextField("NO",map.get("NO"),Field.Store.YES)); // indexed and stored
 		doc.add(new TextField("TI",map.get("TI"),Field.Store.YES)); // indexed and stored
 		doc.add(new TextField("TX",map.get("TX"),Field.Store.YES)); // indexed
@@ -203,6 +207,7 @@ public class IndexText {
 		}
 	}
 
+	//reset Map for each product
 	private static void clearMap(HashMap<String, String> map) {
 		//clean values
 		map.forEach((key,obj)->{
@@ -211,6 +216,8 @@ public class IndexText {
 			}
 		});
 	}
+	
+	//concate with last data for each part
 	private static void getNO(HashMap<String, String> map,BufferedReader br,String str) {
 		map.replace("NO", map.get("NO")+" "+str);
 	}
@@ -223,6 +230,8 @@ public class IndexText {
 	private static void getCS(HashMap<String, String> map,BufferedReader br,String str){
 		map.replace("CS", map.get("CS")+"--"+str);
 	}
+	
+	//get all data for a product part
 	private static String getDetails(BufferedReader br,String line,lamdaString fct) throws IOException{
 		while((line=br.readLine())!=null){
 			if(line.startsWith("*") && StringUtils.containsAny(line.split("\\*")[1],keyWord.FIELD.getValue(),keyWord.RECORD.getValue(),keyWord.THEEND.getValue())){
@@ -236,6 +245,8 @@ public class IndexText {
 		}
 		return line;
 	}
+	
+	//find document by colomne 
 	public static ListProperty<Document> get(String colone,String field) throws IOException, ParseException{
 		IndexReader reader = DirectoryReader.open(FSDirectory.open(INDEX_DIR_OMIM));
 		IndexSearcher searcher = new IndexSearcher(reader);

@@ -70,6 +70,7 @@ public class DrugBankHandler implements ContentHandler {
 		indentation = -1;
 	}
 	
+	//Lecture de l'intérieur de la balise
 	public void characters(char[] ch, int start, int length) throws SAXException {
 			String chara = new String(ch,start,length);
 			// C'est une node name, donc le nom d'un médicament
@@ -116,6 +117,7 @@ public class DrugBankHandler implements ContentHandler {
 				this.toxicity = toxicityCourant;
 			}
 			
+			//C'est un noeud synonyme
 			if(node_synonym){
 				String syno = new String(ch,start,length);
 				if(this.typeRequete == "Drug"){
@@ -132,6 +134,7 @@ public class DrugBankHandler implements ContentHandler {
 		
 	}
 
+	//Fin d'un élement </drug>
 	public void endElement(String arg0, String arg1, String arg2)
 			throws SAXException {
 		// TODO Auto-generated method stub
@@ -140,6 +143,8 @@ public class DrugBankHandler implements ContentHandler {
 		node_synonym = false;
 		node_toxicity = false;
 		
+		//Fin de l'élément drug, on remplit le modele si on a trouvé
+		//quelque chose et on remet les variables à 0
 		if(arg1.compareTo("drug") == 0 && indentation == 1){
 			if(typeRequete == "Disease" && (match_tox || match_ind)){
 				Drug d = new Drug(this.name);
@@ -208,6 +213,7 @@ public class DrugBankHandler implements ContentHandler {
 		
 	}
 
+	//Lecture du nom d'une node XML <drug>
 	public void startElement(String uri, String element, String qualif,
 			Attributes attr) throws SAXException {
 		// TODO Auto-generated method sub
@@ -239,10 +245,12 @@ public class DrugBankHandler implements ContentHandler {
 		
 	}
 
+	//Permet de retourner le modele remplit avec une requête par maladie
 	public Disease getResult(){
 		return this.dis;
 	}
 	
+	//Permet de retourner le modele remplit avec une requête par médicament
 	public ArrayList<Disease> getListResult(){
 		return this.listDis;
 	}

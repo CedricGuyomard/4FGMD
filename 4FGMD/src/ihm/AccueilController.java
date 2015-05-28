@@ -9,6 +9,7 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -95,6 +96,7 @@ public class AccueilController extends Controller{
 	@Override
 	protected void setStartCondition() {
 		
+		//size binding
 		boxSearch.prefWidthProperty().bind(this.prefWidthProperty());
 		boxSearch.minWidthProperty().bind(boxSearch.prefWidthProperty());
 		boxSearch.maxWidthProperty().bind(boxSearch.prefWidthProperty());
@@ -155,7 +157,6 @@ public class AccueilController extends Controller{
 		boxResultDiseases.minHeightProperty().bind(boxResultDiseases.prefHeightProperty());
 		boxResultDiseases.maxHeightProperty().bind(boxResultDiseases.prefHeightProperty());
 		
-		boxResultDiseases.disableProperty().bind(results.emptyProperty());
 		
 		boxDisResult.prefWidthProperty().bind(boxResultDiseases.widthProperty().subtract(15));
 		boxDisResult.minWidthProperty().bind(boxDisResult.prefWidthProperty());
@@ -196,8 +197,6 @@ public class AccueilController extends Controller{
 		boxResultDiseases2.minHeightProperty().bind(boxResultDiseases2.prefHeightProperty());
 		boxResultDiseases2.maxHeightProperty().bind(boxResultDiseases2.prefHeightProperty());
 		
-		boxResultDiseases2.disableProperty().bind(results2.emptyProperty());
-		
 		boxDisResult2.prefWidthProperty().bind(boxResultDiseases2.widthProperty().subtract(15));
 		boxDisResult2.minWidthProperty().bind(boxDisResult2.prefWidthProperty());
 		boxDisResult2.maxWidthProperty().bind(boxDisResult2.prefWidthProperty());
@@ -218,21 +217,38 @@ public class AccueilController extends Controller{
 		boxDisDrugAdverseEffect.maxHeightProperty().bind(boxDisDrugAdverseEffect.prefHeightProperty());
 		boxDisDrugAdverseEffect.minHeightProperty().bind(boxDisDrugAdverseEffect.prefHeightProperty());*/
 		
+
+		//binding visible component
+		boxResultDiseases2.disableProperty().bind(results2.emptyProperty());
+		boxResultDiseases.disableProperty().bind(results.emptyProperty());
+		
 		boxResultDiseases.visibleProperty().bind(rbSign.selectedProperty());
 		boxResultDiseases.managedProperty().bind(rbSign.selectedProperty());
 		boxResultDiseases2.visibleProperty().bind(rbDrug.selectedProperty());
 		boxResultDiseases2.managedProperty().bind(rbDrug.selectedProperty());
 		
+		//binding search button
 		search.setOnAction(e->{
 			research();
 		});
 		search.disableProperty().bind(Bindings.or(rbDrug.selectedProperty().and(drugs.emptyProperty()), rbSign.selectedProperty().and(signs.emptyProperty())));
 		
+		//binding Data
 		lvSign.itemsProperty().bind(signs);
 		lvDrug.itemsProperty().bind(drugs);
 		cbDisResult.itemsProperty().bind(results);
 		cbDisResult2.itemsProperty().bind(results2);
+
 		
+		lvDisSynonym.itemsProperty().bind(synonyms);
+		lvDisSymptom.itemsProperty().bind(symptoms);
+		lvDisDrugIndication.itemsProperty().bind(drugIndications);
+		lvDisDrugAdverseEffect.itemsProperty().bind(drugAdverseEffects);
+
+		lvDisDrugIndication2.itemsProperty().bind(indications);
+		lvDisDrugAdverseEffect2.itemsProperty().bind(adverseEffects);
+		
+		//define cell graphic search listview
 		lvSign.setCellFactory(lv -> {
             return new ListCell<String>() {
                 @Override
@@ -281,6 +297,9 @@ public class AccueilController extends Controller{
                 }
             };
         });
+		
+		
+		//binding action 
 		bSignAnd.setOnAction(e->{
 			//TODO
 			if(tfSign.textProperty().isNotEmpty().get() ){
@@ -305,22 +324,9 @@ public class AccueilController extends Controller{
 		bSignOr.setVisible(false);
 		bDrugOr.setManaged(false);
 		bDrugOr.setVisible(false);
-		/*bSignOr.setOnAction(e->{
-			//TODO
-		});
-		bDrugOr.setOnAction(e->{
-			//TODO
-		});*/
 		
 		
-		lvDisSynonym.itemsProperty().bind(synonyms);
-		lvDisSymptom.itemsProperty().bind(symptoms);
-		lvDisDrugIndication.itemsProperty().bind(drugIndications);
-		lvDisDrugAdverseEffect.itemsProperty().bind(drugAdverseEffects);
-
-		lvDisDrugIndication2.itemsProperty().bind(indications);
-		lvDisDrugAdverseEffect2.itemsProperty().bind(adverseEffects);
-		
+		//binding Result list
 		cbDisResult.valueProperty().addListener((obs,o,n)->{
 			taDisDescription.setText("");
 			synonyms.clear();
@@ -463,9 +469,13 @@ public class AccueilController extends Controller{
          };});
 		
 	}
+	
+	//search action
 	private void research(){
 		results.clear();
 		results2.clear();
+		Alert progressAlert = App.progressAlert("Searching....");
+		progressAlert.show();
 		if(rbSign.isSelected()){
 		//trickyMove short
 		results.setAll(AccueilService.requestDisease(signs).stream().sorted((e1,e2)->{
@@ -487,6 +497,7 @@ public class AccueilController extends Controller{
 				return 1;
 			}).collect(Collectors.toList()));
 		}
+		progressAlert.close();
 	}
 	
 }

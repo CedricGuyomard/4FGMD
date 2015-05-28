@@ -15,6 +15,7 @@ import org.apache.lucene.queryparser.classic.ParseException;
 
 public class TextService {
 
+	//Get diseases by name
 	public static List<Disease> getDiseases(String name) throws IOException, ParseException{
 		if(StringUtils.isNotBlank(name)){
 		ListProperty<Document> list = IndexText.get(IndexText.column.TI.getValue(),name);
@@ -29,6 +30,7 @@ public class TextService {
 		}
 		return new ArrayList<Disease>();
 	}
+	//get Disease by sign
 	public static List<Disease> getDiseasesBySign(String sign) throws IOException, ParseException{
 		if(StringUtils.isNotBlank(sign)){
 		ListProperty<Document> list = IndexText.get(IndexText.column.CS.getValue(),sign);
@@ -43,7 +45,7 @@ public class TextService {
 		}
 		return new ArrayList<Disease>();
 	}
-
+	//get disease by Signs
 	public static List<Disease> getDiseasesBySigns(List<String> sign) throws IOException, ParseException{
 		List<Disease> list = new ArrayList<Disease>();
 		for(String str : sign){
@@ -52,6 +54,7 @@ public class TextService {
 		return list;
 	}
 
+	//get disease from text product
 	public static Disease textItemToDisease(TextItem ti) {
 		Disease dis = new Disease();
 		dis=parseNO(ti, dis);
@@ -60,10 +63,12 @@ public class TextService {
 		dis=parseCS(ti, dis);
 		return dis;
 	}
+	//set omin
 	private static Disease parseNO(TextItem ti,Disease dis){
 		dis.setOmim(ti.getNO().trim());
 		return dis;
 	}
+	//set name and synonyme
 	private static Disease parseTI(TextItem ti,Disease dis){
 		boolean nameNotSet = true;
 		String id ="";
@@ -94,10 +99,12 @@ public class TextService {
 		}
 		return dis;
 	}
+	//set description
 	private static Disease parseTX(TextItem ti,Disease dis){
 		dis.setDescription(ti.getTX());
 		return dis;
 	}
+	//set symptome
 	private static Disease parseCS(TextItem ti,Disease dis){
 		for(String str :ti.getCS().split("--")){
 			if(!(StringUtils.endsWith(str.trim(), ":") || StringUtils.contains(str.trim(), "[") || StringUtils.contains(str.trim(), "]"))){

@@ -27,39 +27,8 @@ public class ParserDrugBank {
 			  
 	}
 	
-	/*
-	public ArrayList<Drug> getMedic(String name) throws SAXException, ParserConfigurationException{
-		  SAXParserFactory spf = SAXParserFactory.newInstance();
-		  spf.setNamespaceAware(true);
-		  SAXParser saxParser = spf.newSAXParser();
-		  saxReader = saxParser.getXMLReader();    
-		  
-		  ArrayList<Drug> listeDrug = new ArrayList<Drug>();
-		  Disease disease = new Disease();
-		  disease.setName("");
-		  DrugBankHandler dbh = new DrugBankHandler(disease);
-	      saxReader.setContentHandler(dbh);
-	      
-	      Date deb = new Date();
-	      
-	      DateFormat format = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG);
-	    		 
-	      System.out.println("Début de parsage : "  + format.format(deb));
-	      try {
-			saxReader.parse(FILE);
-			 listeDrug = dbh.getResult();
-	      } catch (IOException | SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-	      }
-	      Date fin = new Date();
-	      System.out.println("Fin de parsage : "  + format.format(fin));
-	      
-	      return listeDrug;
-	}
-	*/
-	
 	public Disease getDisease(Disease d) throws SAXException, ParserConfigurationException{
+	      //Création du parser
 		  SAXParserFactory spf = SAXParserFactory.newInstance();
 		  spf.setNamespaceAware(true);
 		  SAXParser saxParser = spf.newSAXParser();
@@ -67,6 +36,7 @@ public class ParserDrugBank {
 		  
 		  Disease disease_retour = null;
 
+		  //Création du handler
 		  DrugBankHandler dbh = new DrugBankHandler(d);
 	      saxReader.setContentHandler(dbh);
 	      
@@ -76,6 +46,7 @@ public class ParserDrugBank {
 	    		 
 	      System.out.println("Début de parsage : "  + format.format(deb));
 	      try {
+	    	//Parsage
 			saxReader.parse(FILE);
 			disease_retour = dbh.getResult();
 	      } catch (IOException | SAXException e) {
@@ -88,14 +59,16 @@ public class ParserDrugBank {
 	      return disease_retour;
 	}
 	
+	//Méthode à appeler pour recherche un médicament dans le fichier XML
 	public ArrayList<Disease> getDrug(Drug d) throws SAXException, ParserConfigurationException{
+		  // Création du parser
 		  SAXParserFactory spf = SAXParserFactory.newInstance();
 		  spf.setNamespaceAware(true);
 		  SAXParser saxParser = spf.newSAXParser();
 		  saxReader = saxParser.getXMLReader();    
 		  
 		  ArrayList<Disease> disease_retour = new ArrayList<Disease>();
-
+		  //Création du handler
 		  DrugBankHandler dbh = new DrugBankHandler(d);
 	      saxReader.setContentHandler(dbh);
 	      
@@ -105,6 +78,7 @@ public class ParserDrugBank {
 	    		 
 	      System.out.println("Début de parsage : "  + format.format(deb));
 	      try {
+	    	//Début de la recherche
 			saxReader.parse(FILE);
 			disease_retour = dbh.getListResult();
 	      } catch (IOException | SAXException e) {
@@ -117,59 +91,6 @@ public class ParserDrugBank {
 	      return disease_retour;
 	}
 	
-	/*
-	public ParserDrugBank() throws JDOMException, IOException{
-		
-		Date today = new Date(); 
-		
-		SAXBuilder jdomBuilder = new SAXBuilder();
-		
-		DateFormat DateDeb = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG);
-		
-		System.out.println("Début du parsage : " + DateDeb.format(today));
-		
-		jdomDocument = jdomBuilder.build(FILE);
-		
-		Element test = jdomDocument.getRootElement();
-		
-		DateFormat DateFin = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG);
-		
-		System.out.println("Début du parsage : " + DateFin.format(today));
-		
-		System.out.println(test.getName());
-	} */
 	
-	
-	
-	
-	public static void main(String[] args){
-	
-		try {
-			ParserDrugBank pdb = new ParserDrugBank();
-			Drug d = new Drug("Lepirudin");
-		
-			ArrayList<Disease> retour = pdb.getDrug(d);
-			
-			System.out.println(retour.size());
-			//ArrayList<Drug> test = retour.getListDrugAdverseEffect();
-			//List<Drug> test1 =  retour.getListDrugIndication();
-			/*
-			for(int i = 0; i < test.size(); i++){
-				System.out.println("Drug trouvé  : "+ test.get(i).getName());
-			}
-			for(int i = 0; i < test1.size(); i++){
-				System.out.println("Drug trouvé  : "+ test1.get(i).getName());
-			}
-			*/
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+
 }
