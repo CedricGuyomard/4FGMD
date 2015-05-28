@@ -3,7 +3,7 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Disease extends SuperClass {
+public class Disease {
 
 	///Nom de la maladie
 	private String name;
